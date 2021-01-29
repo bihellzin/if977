@@ -35,4 +35,5 @@ A rodada termina quando o jogador com maior pontuação atingir 120 pontos. Quan
 | [Guilherme Guerra Campos](https://github.com/guilhermeguerrac) (ggc3)  | Frontend |
 | [João Victor Marques dos Santos](https://github.com/joaomarkis) (jvms) | Backend  |
 | [Renato Gabriel Ferreira](https://github.com/renabouj) (rgf)           | Backend  |
+| [José Bruno Farias de Oliveira](https://github.com/brunofariasdeo) (jpfo)    | Backend  |
 | [Júlio César de Carvalho Barros](https://github.com/kaesarz) (jccb2)   | DevOps   |
