@@ -7,6 +7,7 @@ const short_json = (big_json) => {
       "artist": item.track.artists[0].name,
       "spotify_url": item.track.external_urls.spotify,
       "api_url": item.track.href,
+      "duration_ms": item.track.duration_ms,
     }
   }
   )
