@@ -1,12 +1,19 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
   "dependencies": {
     "express": "^4.17.1",
     "js-levenshtein": "^1.1.6",
     "socket.io": "^3.1.1",
-    "uuidv4": "^6.2.6"
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }
