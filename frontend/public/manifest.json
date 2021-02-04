@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "30 Secongs",
+  "name": "Jogo online multiplayer de reconhecimento no qual jogadores duelam entre si para ver quem reconhece mais rápido o maior número de músicas ouvindo apenas um trecho de até 30 segundos.",
   "icons": [
     {
       "src": "favicon.ico",
