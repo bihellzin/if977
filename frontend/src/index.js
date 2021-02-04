@@ -1,11 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import Routes from "./routes";
 import reportWebVitals from "./services/reportWebVitals";
+import { SocketProvider } from "./services/socket";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <SocketProvider>
+      <Routes />
+    </SocketProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

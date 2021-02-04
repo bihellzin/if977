@@ -1,14 +1,14 @@
-const { BrowserRouter, Switch, Route } = require("react-router-dom");
-
-const pages = [{ path: "", component: "" }];
+import React from "react";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Room from "./pages/Room";
 
 function Routes() {
   return (
     <BrowserRouter>
       <Switch>
-        {pages.map(({ path, component }) => (
-          <Route path={path} component={component} />
-        ))}
+        <Route path="/" component={Home} exact />
+        <Route path="/room/:id" component={Room} exact />
       </Switch>
     </BrowserRouter>
   );
