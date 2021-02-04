@@ -4,7 +4,10 @@ import Routes from "./routes";
 import reportWebVitals from "./services/reportWebVitals";
 import { SocketProvider } from "./services/socket";
 
+const teste = <h1>testando deploy automatico</h1>;
+
 ReactDOM.render(
+  teste,
   <React.StrictMode>
     <SocketProvider>
       <Routes />
