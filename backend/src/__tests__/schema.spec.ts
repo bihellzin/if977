@@ -67,7 +67,7 @@ describe('User Model', () => {
     match.room = room;
     match.round = round;
     match.winner = winner;
-    match.current = current;
+    match.currentGoal = current;
     match.goals = goals;
     return match;
   }
@@ -122,8 +122,8 @@ describe('User Model', () => {
     const received = await playerRepository.findOneOrFail({
       relations: ['room', 'user'],
       where: {
-        room: { code: room.code },
-        user: { id: user.id },
+        roomCode: room.code,
+        userId: user.id,
       },
       loadEagerRelations: true,
     });
@@ -144,9 +144,7 @@ describe('User Model', () => {
 
     const received = await messageRepository.find({
       where: {
-        room: {
-          code: room.code,
-        },
+        roomCode: room.code,
       },
       relations: ['player', 'room'],
       loadEagerRelations: true,
@@ -156,7 +154,10 @@ describe('User Model', () => {
       expect.arrayContaining([
         expect.objectContaining({
           room: expect.objectContaining({ code: room.code }),
-          player: expect.objectContaining({ id: player.id }),
+          player: expect.objectContaining({
+            roomCode: player.roomCode,
+            userId: player.userId,
+          }),
           message: message.message,
         }),
       ]),
@@ -210,9 +211,7 @@ describe('User Model', () => {
     const received = await matchRepository.findOneOrFail({
       relations: ['winner'],
       where: {
-        room: {
-          code: match.room.code,
-        },
+        roomCode: match.roomCode,
         round: match.round,
       },
       loadEagerRelations: true,
@@ -220,7 +219,10 @@ describe('User Model', () => {
 
     expect(received).toEqual(
       expect.objectContaining({
-        winner: expect.objectContaining({ id: player.id }),
+        winner: expect.objectContaining({
+          userId: player.userId,
+          roomCode: player.roomCode,
+        }),
       }),
     );
   });
@@ -231,21 +233,19 @@ describe('User Model', () => {
     const goal = await goalRepository.save(genGoal());
 
     const match = genMatch(room, 1);
-    match.current = goal;
+    match.currentGoal = goal;
     await matchRepository.save(match);
 
     const received = await matchRepository.findOneOrFail({
-      relations: ['goals', 'current'],
+      relations: ['goals', 'currentGoal'],
       where: {
-        room: {
-          code: match.room.code,
-        },
+        roomCode: match.roomCode,
         round: match.round,
       },
       loadEagerRelations: true,
     });
 
-    expect(received).toEqual(expect.objectContaining({ current: goal }));
+    expect(received).toEqual(expect.objectContaining({ currentGoal: goal }));
   });
 
   it('Match has many goals', async () => {
@@ -256,16 +256,14 @@ describe('User Model', () => {
     const goal2 = await goalRepository.save(genGoal());
 
     const match = genMatch(room, 1);
-    match.current = goal1;
+    match.currentGoal = goal1;
     match.goals = [goal1, goal2];
     await matchRepository.save(match);
 
     const received = await matchRepository.findOneOrFail({
-      relations: ['goals', 'current'],
+      relations: ['goals'],
       where: {
-        room: {
-          code: match.room.code,
-        },
+        roomCode: match.roomCode,
         round: match.round,
       },
       loadEagerRelations: true,

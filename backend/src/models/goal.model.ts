@@ -22,8 +22,8 @@ export class Goal extends BaseEntity {
   @Column()
   author: string;
 
-  @OneToMany(() => Match, match => match.current)
-  currents: Match[];
+  @OneToMany(() => Match, match => match.currentGoal)
+  currentMatches: Match[];
 
   @ManyToMany(() => Match, match => match.goals)
   matchs: Match[];

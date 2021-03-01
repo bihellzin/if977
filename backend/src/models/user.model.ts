@@ -32,9 +32,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Player, player => player.user)
   rooms: Player[];
 
-  // @OneToMany(() => Message, message => message.user)
-  // messages: Message[];
-
   @CreateDateColumn()
   createdAt: Date;
 

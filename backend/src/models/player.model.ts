@@ -7,6 +7,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Message } from './message.model';
@@ -15,17 +16,19 @@ import { User } from './user.model';
 import { Match } from './match.model';
 
 @Entity({ name: 'players' })
-@Index((player: Player) => [player.room, player.user], { unique: true })
 export class Player {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryColumn()
+  userId: string;
 
-  @ManyToOne(() => User, user => user.rooms, { primary: false, eager: true })
-  @JoinColumn()
+  @PrimaryColumn()
+  roomCode: string;
+
+  @ManyToOne(() => User, user => user.rooms, { primary: true, eager: true })
+  @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Room, room => room.players, { primary: false })
-  @JoinColumn()
+  @ManyToOne(() => Room, room => room.players, { primary: true })
+  @JoinColumn({ name: 'roomCode' })
   room: Room;
 
   @OneToMany(() => Message, message => message.player)
