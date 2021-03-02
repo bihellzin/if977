@@ -22,8 +22,11 @@ export class Room extends BaseEntity {
   @Column()
   theme: string;
 
+  @Column()
+  ownerId: string;
+
   @OneToOne(() => User, user => user.ownerRoom)
-  @JoinColumn()
+  @JoinColumn({ name: 'ownerId' })
   owner: User;
 
   @OneToMany(() => Player, player => player.room)

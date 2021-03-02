@@ -6,6 +6,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Player } from './player.model';
@@ -14,19 +15,24 @@ import { User } from './user.model';
 
 @Entity({ name: 'messages' })
 export class Message {
-  // @PrimaryGeneratedColumn('uuid')
-  // id: string;
+  @PrimaryColumn()
+  playerRoomCode: string;
 
-  // @ManyToOne(() => User, user => user.messages, { primary: true })
-  // @JoinColumn()
-  // user: User;
+  @PrimaryColumn()
+  playerUserId: string;
+
+  @PrimaryColumn()
+  roomCode: string;
 
   @ManyToOne(() => Player, player => player.messages, { primary: true })
-  @JoinColumn()
+  @JoinColumn([
+    { name: 'playerRoomCode', referencedColumnName: 'roomCode' },
+    { name: 'playerUserId', referencedColumnName: 'userId' },
+  ])
   player: Player;
 
   @ManyToOne(() => Room, room => room.messages, { primary: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'roomCode' })
   room: Room;
 
   @Column()

@@ -1,4 +1,5 @@
 import {
+  Column,
   CreateDateColumn,
   Entity,
   Generated,
@@ -15,19 +16,34 @@ import { Goal } from './goal.model';
 @Entity({ name: 'matches' })
 export class Match {
   @PrimaryColumn()
+  roomCode: string;
+
+  @PrimaryColumn()
   round: number;
 
   @ManyToOne(() => Room, room => room.matches, { primary: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'roomCode' })
   room: Room;
 
+  @Column({ nullable: true })
+  winnerUserId: string;
+
+  @Column({ nullable: true })
+  winnerRoomCode: string;
+
   @ManyToOne(() => Player, player => player.wins, { nullable: true })
-  @JoinColumn()
+  @JoinColumn([
+    { name: 'winnerUserId', referencedColumnName: 'userId' },
+    { name: 'winnerRoomCode', referencedColumnName: 'roomCode' },
+  ])
   winner?: Player;
 
-  @ManyToOne(() => Goal, goal => goal.currents)
-  @JoinColumn()
-  current?: Goal;
+  @Column({ nullable: true })
+  currentGoalId: string;
+
+  @ManyToOne(() => Goal, goal => goal.currentMatches)
+  @JoinColumn({ name: 'currentGoalId', referencedColumnName: 'id' })
+  currentGoal?: Goal;
 
   @ManyToMany(() => Goal, goal => goal.matchs)
   @JoinTable({ name: 'matches_goal' })
