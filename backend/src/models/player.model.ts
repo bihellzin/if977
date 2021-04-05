@@ -1,45 +1,54 @@
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Message } from './message.model';
+import { Play } from './play.model';
 import { Room } from './room.model';
 import { User } from './user.model';
-import { Match } from './match.model';
 
 @Entity({ name: 'players' })
+@Index((player: Player) => [player.userId, player.roomCode], { unique: true })
 export class Player {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   userId: string;
 
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   roomCode: string;
 
-  @ManyToOne(() => User, user => user.rooms, { primary: true, eager: true })
+  @CreateDateColumn()
+  joinedAt: Date;
+
+  @Column({ nullable: true })
+  exitedAt: Date;
+
+  // Relations
+  @ManyToOne(() => User, user => user.rooms, {
+    primary: true,
+    eager: true,
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Room, room => room.players, { primary: true })
+  @ManyToOne(() => Room, room => room.players, {
+    primary: true,
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'roomCode' })
   room: Room;
 
   @OneToMany(() => Message, message => message.player)
   messages: Message[];
 
-  @OneToMany(() => Match, match => match.winner)
-  wins?: Match[];
-
-  @CreateDateColumn()
-  joinedAt: Date;
-
-  @Column({ nullable: true })
-  separatedAt: Date;
+  @OneToMany(() => Play, play => play.player)
+  plays: Play[];
 }

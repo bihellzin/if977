@@ -1,55 +1,52 @@
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
-  Generated,
+  FindConditions,
+  getConnection,
+  Index,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
+  LessThan,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
 } from 'typeorm';
-import { Player } from './player.model';
 import { Room } from './room.model';
 import { Goal } from './goal.model';
+import { Play } from './play.model';
 
 @Entity({ name: 'matches' })
+@Index((match: Match) => [match.roomCode, match.round], { unique: true })
 export class Match {
-  @PrimaryColumn()
+  @PrimaryColumn('uuid')
   roomCode: string;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ default: 1 })
   round: number;
 
-  @ManyToOne(() => Room, room => room.matches, { primary: true })
+  @CreateDateColumn({ primary: true })
+  startedAt: Date;
+
+  @Column({ nullable: true })
+  finishedAt: Date;
+
+  // Logical
+  @ManyToOne(() => Room, room => room.matches, {
+    primary: true,
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'roomCode' })
   room: Room;
 
-  @Column({ nullable: true })
-  winnerUserId: string;
-
-  @Column({ nullable: true })
-  winnerRoomCode: string;
-
-  @ManyToOne(() => Player, player => player.wins, { nullable: true })
-  @JoinColumn([
-    { name: 'winnerUserId', referencedColumnName: 'userId' },
-    { name: 'winnerRoomCode', referencedColumnName: 'roomCode' },
-  ])
-  winner?: Player;
-
-  @Column({ nullable: true })
-  currentGoalId: string;
-
-  @ManyToOne(() => Goal, goal => goal.currentMatches)
-  @JoinColumn({ name: 'currentGoalId', referencedColumnName: 'id' })
-  currentGoal?: Goal;
-
-  @ManyToMany(() => Goal, goal => goal.matchs)
-  @JoinTable({ name: 'matches_goal' })
+  @OneToMany(() => Goal, goal => goal.match, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   goals?: Goal[];
 
-  @CreateDateColumn()
-  @Generated('rowid')
-  sendedAt: Date;
+  @OneToMany(() => Play, play => play.match)
+  plays?: Play[];
 }

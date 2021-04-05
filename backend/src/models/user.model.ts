@@ -3,12 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Message } from './message.model';
 import { Player } from './player.model';
 import { Room } from './room.model';
 
@@ -20,21 +20,39 @@ export class User extends BaseEntity {
   @Column()
   name: string;
 
-  @Column()
-  email: string;
+  @Column({ default: 0 })
+  userType: number;
 
-  @Column()
-  password: string;
+  @Column({ nullable: true })
+  email?: string;
 
-  @OneToOne(type => Room, room => room.owner)
-  ownerRoom: Room;
-
-  @OneToMany(() => Player, player => player.user)
-  rooms: Player[];
+  @Column({ nullable: true })
+  password?: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // Relations
+  @OneToMany(() => Room, room => room.owner)
+  ownerRooms?: Room[];
+
+  @OneToMany(() => Player, player => player.user)
+  rooms: Player[];
+
+  @ManyToMany(() => User)
+  @JoinTable({
+    name: 'friends',
+    joinColumn: {
+      name: 'userId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'friendId',
+      referencedColumnName: 'id',
+    },
+  })
+  friends: User[];
 }

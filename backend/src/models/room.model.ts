@@ -4,12 +4,12 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Message } from './message.model';
 import { Player } from './player.model';
 import { User } from './user.model';
 import { Match } from './match.model';
@@ -19,28 +19,35 @@ export class Room extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   code: string;
 
+  @Column('uuid')
+  ownerId: string;
+
   @Column()
   theme: string;
 
   @Column()
-  ownerId: string;
-
-  @OneToOne(() => User, user => user.ownerRoom)
-  @JoinColumn({ name: 'ownerId' })
-  owner: User;
-
-  @OneToMany(() => Player, player => player.room)
-  players: Player[];
-
-  @OneToMany(() => Message, message => message.room)
-  messages: Message[];
-
-  @OneToMany(() => Match, match => match.room)
-  matches: Match[];
+  name: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // Relations
+  @ManyToOne(() => User, user => user.ownerRooms, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'ownerId' })
+  owner: User;
+
+  @OneToMany(() => Player, player => player.room, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
+  players: Player[];
+
+  @OneToMany(() => Match, match => match.room)
+  matches: Match[];
 }

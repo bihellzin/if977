@@ -16,16 +16,17 @@
     "express": "^4.17.1",
     "helmet": "^4.4.1",
     "js-levenshtein": "^1.1.6",
+    "pg": "^8.5.1",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^3.1.1",
     "sqlite3": "^5.0.2",
-    "typeorm": "^0.2.31",
-    "uuid": "^8.3.2"
+    "typeorm": "^0.2.31"
   },
   "devDependencies": {
     "@types/express": "^4.17.11",
     "@types/faker": "^5.1.7",
     "@types/jest": "^26.0.20",
+    "@types/supertest": "^2.0.10",
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.15.2",

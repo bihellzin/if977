@@ -3,28 +3,38 @@ import {
   Column,
   Entity,
   Index,
+  PrimaryColumn,
+  CreateDateColumn,
   OneToMany,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-  JoinTable,
+  ManyToOne,
 } from 'typeorm';
 import { Match } from './match.model';
+import { Music } from './music.model';
 
 @Entity({ name: 'goals' })
-@Index((goal: Goal) => [goal.name, goal.author], { unique: true })
+@Index((goal: Goal) => [goal.matchRoomCode, goal.matchRoomRound], {
+  unique: true,
+})
 export class Goal extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryColumn('uuid')
+  matchRoomCode: string;
 
-  @Column()
-  name: string;
+  @PrimaryColumn()
+  matchRoomRound: number;
 
-  @Column()
-  author: string;
+  @PrimaryColumn()
+  musicUrl: string;
 
-  @OneToMany(() => Match, match => match.currentGoal)
-  currentMatches: Match[];
+  @CreateDateColumn()
+  startedAt: Date;
 
-  @ManyToMany(() => Match, match => match.goals)
-  matchs: Match[];
+  @Column({ nullable: true })
+  finishedAt: Date;
+
+  // Relations
+  @ManyToOne(() => Music, music => music.goals)
+  music: Music;
+
+  @ManyToOne(() => Match, match => match.goals)
+  match: Match;
 }
