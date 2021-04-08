@@ -4,6 +4,7 @@ import About from './pages/About';
 import Home from './pages/Home';
 import Room from './pages/Room';
 import Signin from './pages/Signin';
+import Signup from './pages/Signup';
 
 function Routes() {
   return (
@@ -14,6 +15,7 @@ function Routes() {
           <Route path="/room/:id" component={Room} exact />
           <Route path="/about" component={About} exact />
           <Route path="/signin" component={Signin} exact />
+          <Route path="/signup" component={Signup} exact />
         </Switch>
       </Layout>
     </BrowserRouter>

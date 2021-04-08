@@ -22,7 +22,7 @@ const CustomNavbar = () => {
           <Form inline>
             <Button
               variant="outline-light"
-              onClick={() => handleRoute('/signin')}
+              onClick={() => handleRoute('/signup')}
             >
               INSCREVER-SE
             </Button>
