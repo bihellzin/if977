@@ -19,7 +19,8 @@ const SocketProvider: React.FC = ({ children }) => {
   const [socket] = useState(SocketClient.socket);
 
   useEffect(() => {
-    socket.connect();
+    if (socket != null && socket.disconnected) socket.connect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
