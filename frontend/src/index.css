@@ -13,3 +13,22 @@ body {
 * {
   outline: none;
 }
+
+.hover-pointer:hover {
+  cursor: pointer;
+}
+
+.boxed {
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.message-box {
+  overflow: auto;
+  height: 150px;
+  border: 1px solid #ced4da;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  padding: 5px;
+}

@@ -22,9 +22,9 @@ const CustomNavbar = () => {
           <Form inline>
             <Button
               variant="outline-light"
-              onClick={() => handleRoute('/signup')}
+              onClick={() => handleRoute('/auth')}
             >
-              INSCREVER-SE
+              ENTRAR
             </Button>
           </Form>
         </Navbar.Collapse>

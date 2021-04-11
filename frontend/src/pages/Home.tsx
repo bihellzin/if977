@@ -10,6 +10,7 @@ import {
   Card,
   InputGroup,
   Image,
+  Pagination,
 } from 'react-bootstrap';
 
 function Home() {
@@ -17,6 +18,7 @@ function Home() {
   const [selectedRoom, setSelectedRoom] = useState('');
   const [nickname, setNickname] = useState('');
   const [keyword, setKeyword] = useState('');
+  const [page, setPage] = useState(1);
   const rooms = [
     { code: '1', name: 'Room 1', theme: 'Rock', owner: 'asd', players: 3 },
     { code: '2', name: 'Room 1', theme: 'Rock', owner: 'asd', players: 3 },
@@ -52,7 +54,7 @@ function Home() {
   return (
     <>
       <Carousel
-        className="mb-3"
+        className="mb-3 mt-3"
         controls={false}
         indicators={false}
         interval={3000}
@@ -76,7 +78,8 @@ function Home() {
       <Form>
         <Form.Row>
           <Col xs={12} md={6} className="mb-3">
-            <InputGroup className="mb-3">
+            <Form.Label>Nickname</Form.Label>
+            <InputGroup>
               <Form.Control
                 value={nickname}
                 onChange={e => setNickname(e.target.value)}
@@ -85,7 +88,8 @@ function Home() {
             </InputGroup>
           </Col>
           <Col xs={12} md={6} className="mb-3">
-            <InputGroup className="mb-3">
+            <Form.Label>Buscar sala</Form.Label>
+            <InputGroup>
               <Form.Control
                 value={keyword}
                 onChange={e => setKeyword(e.target.value)}
@@ -102,20 +106,45 @@ function Home() {
               key={room.code}
               className={
                 selectedRoom === room.code
-                  ? 'bg-secondary text-white text-center'
-                  : 'text-center'
+                  ? 'hover-pointer bg-secondary text-white text-center'
+                  : 'hover-pointer text-center'
               }
               onClick={() => handleRoomClick(room.code)}
             >
-              <Card.Header>Tema: {room.theme}</Card.Header>
               <Card.Body>
                 <Card.Title>{room.name}</Card.Title>
-                <Card.Text>Jogadores: {room.players}</Card.Text>
+                <Card.Text>
+                  <small>
+                    Tema: {room.theme} | Jogadores: {room.players} | Criado por:{' '}
+                    {room.owner}
+                  </small>
+                </Card.Text>
               </Card.Body>
             </Card>
           );
         })}
       </CardColumns>
+      <Row>
+        <Col>
+          <Pagination className="justify-content-center">
+            <Pagination.First onClick={() => setPage(1)} />
+            <Pagination.Prev onClick={() => setPage(Math.max(page - 1, 1))} />
+            {Array.from({ length: rooms.length }, (v, k) => k + 1).map(i => (
+              <Pagination.Item
+                key={i}
+                active={page === i}
+                onClick={() => setPage(i)}
+              >
+                {i}
+              </Pagination.Item>
+            ))}
+            <Pagination.Next
+              onClick={() => setPage(Math.min(page + 1, rooms.length))}
+            />
+            <Pagination.Last onClick={() => setPage(rooms.length)} />
+          </Pagination>
+        </Col>
+      </Row>
       <Row xs={12}>
         <Col xs={12} md={3} className="mb-3">
           <Button

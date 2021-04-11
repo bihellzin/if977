@@ -14,7 +14,7 @@ const Textarea: React.FC<TextareaProps> = ({ value }) => {
   }, [value]);
 
   return (
-    <div ref={textarea} style={{ overflow: 'auto', height: 200 }}>
+    <div ref={textarea} className="message-box">
       {value.map(({ id, message, from }) => (
         <div key={id}>
           <strong>{`${from}:`}</strong> {`${message}`}

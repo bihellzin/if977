@@ -8,9 +8,42 @@ function Room() {
   const socket = useContext(SocketContext);
   const roomCode = useParams<{ id: string }>().id;
   const [serverTime, setServerTime] = useState(new Date());
+  const [roomName, setRoomName] = useState('Test');
   const [messages, setMessages] = useState([]);
   const [currentMsg, setCurrentMsg] = useState('');
   const [currentAnswer, setCurrentAnswer] = useState('');
+  const [players, setPlayers] = useState([
+    {
+      id: '1',
+      name: 'Player 1',
+      score: 99,
+      wins: 1,
+    },
+    {
+      id: '2',
+      name: 'Player 2',
+      score: 80,
+      wins: 0,
+    },
+    {
+      id: '3',
+      name: 'Player 3',
+      score: 75,
+      wins: 0,
+    },
+    {
+      id: '4',
+      name: 'Player 4',
+      score: 75,
+      wins: 0,
+    },
+    {
+      id: '5',
+      name: 'Player 5',
+      score: 75,
+      wins: 0,
+    },
+  ]);
 
   useEffect(() => {
     socket.emit('join-room', roomCode);
@@ -31,13 +64,21 @@ function Room() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const sendMessage = () => {
+  const sendMessage = (e: any) => {
+    e.preventDefault();
     if (currentMsg) {
       socket.emit('chat-message', currentMsg);
       setCurrentMsg('');
     }
   };
 
+  const sendAnswer = (e: any) => {
+    e.preventDefault();
+    if (currentAnswer) {
+      socket.emit('chat-message', currentAnswer);
+      setCurrentAnswer('');
+    }
+  };
   useEffect(() => {
     socket.on('chat-message', (data: any) => {
       if (data) setMessages(data);
@@ -50,7 +91,7 @@ function Room() {
       <Row>
         <Col xs={6}>
           <h1>
-            Room Name
+            Room {roomName}
             <br />
             <small>Code: {roomCode}</small>
           </h1>
@@ -73,31 +114,62 @@ function Room() {
       </Row>
 
       <Row>
-        <Col>
-          <Textarea value={[]}></Textarea>
-          <InputGroup>
-            <Form.Control
-              value={currentAnswer}
-              onChange={e => setCurrentAnswer(e.currentTarget.value)}
-              placeholder="Escreva sua resposta aqui..."
-            />
-            <Button variant="dark" onClick={sendMessage}>
-              ENVIAR
-            </Button>
-          </InputGroup>
+        <Col sm={3}>
+          <h3>Placar</h3>
+          {players.map(player => (
+            <p key={player.id} className="boxed">
+              <strong>{player.name}</strong>
+              <br />
+              {player.score} Pontos{' '}
+              {player.wins > 0 ? `| ${player.wins} vitórias` : ''}
+            </p>
+          ))}
         </Col>
-        <Col>
-          <Textarea value={messages}></Textarea>
-          <InputGroup>
-            <Form.Control
-              value={currentMsg}
-              onChange={e => setCurrentMsg(e.currentTarget.value)}
-              placeholder="Escreva sua mensagem aqui..."
-            />
-            <Button variant="secondary" onClick={sendMessage}>
-              ENVIAR
-            </Button>
-          </InputGroup>
+        <Col sm={9}>
+          <Row>
+            <Col xs={12} className="mb-3">
+              <h3>Música</h3>
+              <p className="boxed">
+                Gênero: Rock
+                <br />
+                Quantidade de letras no nome da música: 7<br />
+                Quantidade de letras no nome do autor: 7<br />
+                Tempo: 7:00
+              </p>
+            </Col>
+            <Col sm={12} md={6}>
+              <h3>Repostas</h3>
+              <Textarea value={[]}></Textarea>
+              <Form onSubmit={sendAnswer}>
+                <InputGroup>
+                  <Form.Control
+                    value={currentAnswer}
+                    onChange={e => setCurrentAnswer(e.currentTarget.value)}
+                    placeholder="Escreva sua resposta aqui..."
+                  />
+                  <Button variant="dark" type="submit">
+                    ENVIAR
+                  </Button>
+                </InputGroup>
+              </Form>
+            </Col>
+            <Col sm={12} md={6}>
+              <h3>Bate-papo</h3>
+              <Textarea value={messages}></Textarea>
+              <Form onSubmit={sendMessage}>
+                <InputGroup>
+                  <Form.Control
+                    value={currentMsg}
+                    onChange={e => setCurrentMsg(e.currentTarget.value)}
+                    placeholder="Escreva sua mensagem aqui..."
+                  />
+                  <Button variant="secondary" type="submit">
+                    ENVIAR
+                  </Button>
+                </InputGroup>
+              </Form>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </>
