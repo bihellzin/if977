@@ -89,16 +89,16 @@ function Room() {
   return (
     <>
       <Row>
-        <Col xs={6}>
+        <Col sm={6}>
           <h1>
             Room {roomName}
             <br />
             <small>Code: {roomCode}</small>
           </h1>
         </Col>
-        <Col xs="auto">
-          <p>
-            Tempo atual do servidor:{' '}
+        <Col sm={6}>
+          <p className="text-right">
+            Horário:{' '}
             {serverTime
               .toLocaleString('en-us', {
                 year: 'numeric',
