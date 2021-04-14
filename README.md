@@ -71,3 +71,9 @@ A rodada termina quando o jogador com maior pontuação atingir 120 pontos. Quan
   </tr>
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+
+## Links Importantes
+
+- [Documentação](https://www.notion.so/30-Secongs-Wiki-95eb932f2c6b4efdac930f2126351990)
+- [Kanban](https://trello.com/invite/b/ZcWGLFUx/45d995613fa71e0e42270c132d9953e2/30-secongs)
