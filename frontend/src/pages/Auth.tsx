@@ -16,7 +16,7 @@ const AuthPage: React.FC = () => {
             <Form.Control type="password" placeholder="Digite sua senha" />
           </Form.Group>
           <Button variant="secondary" type="submit" block>
-            Autenticar
+            AUTENTICAR
           </Button>
         </Form>
       </Col>
@@ -43,7 +43,7 @@ const AuthPage: React.FC = () => {
             />
           </Form.Group>
           <Button variant="primary" type="submit" block>
-            Inscrever
+            INSCREVER
           </Button>
         </Form>
       </Col>

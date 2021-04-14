@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router';
 import {
-  Carousel,
   CardColumns,
   Form,
   Col,
@@ -9,16 +8,16 @@ import {
   Button,
   Card,
   InputGroup,
-  Image,
   Pagination,
 } from 'react-bootstrap';
+import Carousel from '../components/Carousel';
 
-function Home() {
+const Home: React.FC = () => {
   const history = useHistory();
-  const [selectedRoom, setSelectedRoom] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [keyword, setKeyword] = useState('');
-  const [page, setPage] = useState(1);
+  const [selectedRoom, setSelectedRoom] = React.useState('');
+  const [nickname, setNickname] = React.useState('');
+  const [keyword, setKeyword] = React.useState('');
+  const [page, setPage] = React.useState(1);
   const rooms = [
     { code: '1', name: 'Room 1', theme: 'Rock', owner: 'asd', players: 3 },
     { code: '2', name: 'Room 1', theme: 'Rock', owner: 'asd', players: 3 },
@@ -28,53 +27,13 @@ function Home() {
     { code: '6', name: 'Room 1', theme: 'Rock', owner: 'fgh', players: 3 },
   ];
 
-  const slides = [
-    {
-      title: '30 Secongs',
-      description:
-        'Desafie seus amigos a reconher o nome das músicas ouvindo apenas um pequeno trecho.',
-      color: '3498db',
-    },
-    {
-      title: '30 Secongs',
-      description: 'Crie uma sala, chame seus amigos e divirtam-se!',
-      color: '3498db',
-    },
-    {
-      title: '30 Secongs',
-      description: 'Jogue imediatamente, gratuito e sem anúncios!',
-      color: '3498db',
-    },
-  ];
-
   const handleRoomClick = (code: string) => {
     setSelectedRoom(code);
   };
 
   return (
     <>
-      <Carousel
-        className="mb-3 mt-3"
-        controls={false}
-        indicators={false}
-        interval={3000}
-        fade
-      >
-        {slides.map(({ title, description, color }) => (
-          <Carousel.Item key={description}>
-            <Image
-              className="w-100 d-none d-md-block"
-              src={`https://dummyimage.com/800x120/${color}/${color}`}
-              alt={title}
-              fluid
-            />
-            <Carousel.Caption>
-              <h1>{title}</h1>
-              <p>{description}</p>
-            </Carousel.Caption>
-          </Carousel.Item>
-        ))}
-      </Carousel>
+      <Carousel />
       <Form>
         <Form.Row>
           <Col xs={12} md={6} className="mb-3">
@@ -179,6 +138,6 @@ function Home() {
       </Row>
     </>
   );
-}
+};
 
 export default Home;
