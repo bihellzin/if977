@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import { createSocket } from './services/socket';
 import Database from './databases';
 import { errorHandler } from './middlewares/errorHandler';
+import { passport } from './middlewares/passport';
 
 const clientURL = process.env.CLIENT_URL || '*';
 
@@ -30,6 +31,7 @@ class App {
     this.app.use(cors({ origin: clientURL }));
     this.app.use(helmet());
     this.app.use(express.json());
+    this.app.use(passport.initialize());
   }
 
   private initializeControllers(controllers: any[]) {

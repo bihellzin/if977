@@ -66,7 +66,7 @@ describe('User Suite', () => {
 
   it('Update invalid user', async () => {
     const res = await req
-      .put(`/user/${faker.random.uuid()}`)
+      .patch(`/user/${faker.random.uuid()}`)
       .send({ name: faker.internet.userName() });
     expect(res.status).toEqual(200);
     expect(res.body.data).toBeFalsy();
@@ -80,7 +80,7 @@ describe('User Suite', () => {
     expect(body.data.id).toBeDefined();
 
     const res = await req
-      .put(`/user/${body.data.id}`)
+      .patch(`/user/${body.data.id}`)
       .send({ name: faker.internet.userName() });
     expect(res.status).toEqual(200);
     expect(res.body.data).toBeTruthy();
