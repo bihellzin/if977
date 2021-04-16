@@ -8,9 +8,8 @@
 </p>
 
 <p align="center">
-Tetris-js é uma implementação do clássico jogo Tetris utilizando html, css e javascript puro.
-</p>
 É um jogo online multiplayer no qual jogadores duelam entre si para ver quem reconhece mais rápido o maior número de músicas ouvindo apenas um trecho de até 30 segundos.
+</p>
 
 ---
 
