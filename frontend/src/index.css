@@ -32,3 +32,71 @@ body {
   border-top-right-radius: 5px;
   padding: 5px;
 }
+
+.input-login {
+  background: #FFFDFD;
+  border-radius: 25px;
+}
+
+.button-default {
+  background: #080D8E;
+  border-radius: 50px;
+}
+
+.label-white {
+  position: absolute;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 29px;
+  color: #FFFFFF;
+  border: 1px solid #000000;
+}
+
+.label-black {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 27px;
+  line-height: 32px;
+  color: #18191F;
+}
+
+.card-room {
+  background: #FFFFFF;
+  border: 2px solid #18191F;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 0px #18191F;
+  border-radius: 16px;
+}
+
+
+.label-grey {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 20px;
+  color: #474A57;
+}
+
+.arrow {
+  position: absolute;
+  background: #FFFFFF;
+  border: 2px solid #18191F;
+  box-sizing: border-box;
+}
+
+.button-close {
+  background: #FF522D;
+  border: 2px solid #18191F;
+  box-sizing: border-box;
+}
+
+.search-box {
+  background: #FFFFFF;
+  border: 2px solid #18191F;
+  box-sizing: border-box;
+  border-radius: 16px;
+}
