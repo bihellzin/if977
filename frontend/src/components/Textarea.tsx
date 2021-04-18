@@ -4,7 +4,7 @@ interface TextareaProps {
   value: any[];
 }
 
-const Textarea: React.FC<TextareaProps> = ({ value }) => {
+const Textarea: React.FC<TextareaProps> = ({ value, children }) => {
   const textarea = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -20,6 +20,7 @@ const Textarea: React.FC<TextareaProps> = ({ value }) => {
           <strong>{`${from}:`}</strong> {`${message}`}
         </div>
       ))}
+      {children}
     </div>
   );
 };

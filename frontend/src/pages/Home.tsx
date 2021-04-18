@@ -8,10 +8,13 @@ import {
   Button,
   Card,
   InputGroup,
-  Pagination,
-  Container,
 } from 'react-bootstrap';
-import { FiSearch } from 'react-icons/fi';
+import {
+  FiSearch,
+  GrClose,
+  FiChevronRight,
+  FiChevronLeft,
+} from 'react-icons/all';
 
 const Home: React.FC = () => {
   const history = useHistory();
@@ -31,12 +34,20 @@ const Home: React.FC = () => {
   const handleRoomClick = (code: string) => {
     setSelectedRoom(code);
   };
-
   return (
     <>
-      <Row className="justify-content-center pt-3">
-        <Col xs={2}></Col>
-        <Col xs={8} md={4}>
+      <Row className="pt-3">
+        <Col xs={12}>
+          <div
+            className="button-close ml-auto"
+            onClick={() => history.goBack()}
+          >
+            <GrClose size={24} />
+          </div>
+        </Col>
+      </Row>
+      <Row className="justify-content-center p-3">
+        <Col xs={10} md={3} className="ml-auto mr-auto">
           <Form>
             <Form.Row className="mb-3">
               <InputGroup className="search-box">
@@ -50,9 +61,6 @@ const Home: React.FC = () => {
               </InputGroup>
             </Form.Row>
           </Form>
-        </Col>
-        <Col xs={2}>
-          <FiSearch size={24} />
         </Col>
       </Row>
       <Row className="justify-content-center pt-3">
@@ -92,9 +100,23 @@ const Home: React.FC = () => {
           </CardColumns>
 
           <Row xs={12} className="justify-content-center pt-3">
-            <Col xs={6}>x</Col>
-            <Col xs={6}>x</Col>
-            <Col xs={6} md={4} className="mb-3">
+            <Col xs={6}>
+              <div
+                className="button-round"
+                onClick={() => setPage(Math.max(page - 1, 1))}
+              >
+                <FiChevronLeft size={24} />
+              </div>
+            </Col>
+            <Col xs={6}>
+              <div
+                className="button-round ml-auto"
+                onClick={() => setPage(Math.min(page + 1, rooms.length))}
+              >
+                <FiChevronRight size={24} />
+              </div>
+            </Col>
+            <Col xs={12} md={4} className="mt-3 mb-3">
               <Button
                 className="button-default"
                 variant="primary"
@@ -105,7 +127,7 @@ const Home: React.FC = () => {
                 CRIAR SALA
               </Button>
             </Col>
-            <Col xs={6} md={4} className="mb-3">
+            <Col xs={12} md={4} className="mt-3 mb-3">
               <Button
                 className="button-default"
                 variant="primary"
@@ -117,28 +139,6 @@ const Home: React.FC = () => {
               </Button>
             </Col>
           </Row>
-        </Col>
-      </Row>
-
-      <Row>
-        <Col>
-          <Pagination className="justify-content-center">
-            <Pagination.First onClick={() => setPage(1)} />
-            <Pagination.Prev onClick={() => setPage(Math.max(page - 1, 1))} />
-            {Array.from({ length: rooms.length }, (v, k) => k + 1).map(i => (
-              <Pagination.Item
-                key={i}
-                active={page === i}
-                onClick={() => setPage(i)}
-              >
-                {i}
-              </Pagination.Item>
-            ))}
-            <Pagination.Next
-              onClick={() => setPage(Math.min(page + 1, rooms.length))}
-            />
-            <Pagination.Last onClick={() => setPage(rooms.length)} />
-          </Pagination>
         </Col>
       </Row>
     </>

@@ -1,16 +1,18 @@
 html,
 body {
-  height: 100%;
+  min-height: 100%;
   margin: 0;
   padding: 0;
+}
+
+body {
+  background: linear-gradient(180deg, #05a3a4 0%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient(0deg, rgba(8, 223, 133, 0.83), rgba(8, 223, 133, 0.83));
 }
 
 #root {
   height: 100%;
   margin: 0 auto;
-
-  background: linear-gradient(180deg, #05a3a4 0%, rgba(255, 255, 255, 0) 100%),
-    linear-gradient(0deg, rgba(8, 223, 133, 0.83), rgba(8, 223, 133, 0.83));
 }
 
 * {
@@ -30,9 +32,6 @@ body {
 .message-box {
   overflow: auto;
   height: 150px;
-  border: 1px solid #ced4da;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
   padding: 5px;
 }
 
@@ -104,9 +103,29 @@ body {
 }
 
 .button-close {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: #ff522d;
   border: 2px solid #18191f;
   box-sizing: border-box;
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+.button-round {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  border-radius: 100%;
+  cursor: pointer;
 }
 
 .search-box {
@@ -126,4 +145,48 @@ body {
 .input-control {
   border: 0;
   text-align: center;
+}
+
+.chat-control {
+  border: 0;
+}
+
+.chat-box {
+  background: #ffffff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 0px #18191f;
+  border-radius: 16px;
+}
+
+.chat-input {
+  background: #ffffff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  border-radius: 16px;
+  justify-content: center;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.chat-message {
+  position: absolute;
+  width: 346px;
+  height: 56px;
+  left: 13px;
+  top: 232px;
+  background: #ffffff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  border-radius: 66px;
+}
+
+.label-pontuacao {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 23px;
+  line-height: 32px;
+  color: #18191f;
 }

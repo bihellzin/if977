@@ -3,14 +3,13 @@ import {
   Row,
   Col,
   Button,
-  Container,
   Figure,
   InputGroup,
   FormControl,
   Form,
 } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import logo from '../assets/logox.svg';
+import logo from '../assets/logo.png';
 import avatar1 from '../assets/avatar-1.png';
 
 const AuthPage: React.FC = () => {
@@ -44,6 +43,7 @@ const AuthPage: React.FC = () => {
             </Form.Row>
             <Form.Row>
               <Button
+                className="button-default"
                 variant="primary"
                 onClick={() => history.push('/lobby')}
                 block

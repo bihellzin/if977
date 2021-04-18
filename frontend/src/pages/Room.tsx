@@ -1,10 +1,18 @@
 import { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { SocketContext } from '../services/socket';
 import Textarea from '../components/Textarea';
-import { Button, Row, Col, Form, InputGroup } from 'react-bootstrap';
+import { Row, Col, Form, InputGroup } from 'react-bootstrap';
+import { GrClose, AiOutlineSend } from 'react-icons/all';
+import avatar1 from '../assets/avatar-1.png';
+import avatar2 from '../assets/avatar-2.png';
+import avatar3 from '../assets/avatar-3.png';
+import avatar4 from '../assets/avatar-4.png';
+import avatar5 from '../assets/avatar-5.png';
+import avatar6 from '../assets/avatar-6.png';
 
 function Room() {
+  const history = useHistory();
   const socket = useContext(SocketContext);
   const roomCode = useParams<{ id: string }>().id;
   const [serverTime, setServerTime] = useState(new Date());
@@ -16,30 +24,35 @@ function Room() {
     {
       id: '1',
       name: 'Player 1',
+      avatar: avatar1,
       score: 99,
       wins: 1,
     },
     {
       id: '2',
       name: 'Player 2',
+      avatar: avatar2,
       score: 80,
       wins: 0,
     },
     {
       id: '3',
       name: 'Player 3',
+      avatar: avatar3,
       score: 75,
       wins: 0,
     },
     {
       id: '4',
       name: 'Player 4',
+      avatar: avatar4,
       score: 75,
       wins: 0,
     },
     {
       id: '5',
       name: 'Player 5',
+      avatar: avatar5,
       score: 75,
       wins: 0,
     },
@@ -88,84 +101,70 @@ function Room() {
 
   return (
     <>
-      <Row>
-        <Col sm={6}>
-          <h1>
-            Room {roomName}
-            <br />
-            <small>Code: {roomCode}</small>
-          </h1>
-        </Col>
-        <Col sm={6}>
-          <p className="text-right">
-            Horário:{' '}
-            {serverTime
-              .toLocaleString('en-us', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-              })
-              .replace(/(\d+)\/(\d+)\/(\d+)/, '$1/$2/$3')}
-          </p>
+      <Row className="pt-3">
+        <Col xs={12}>
+          <div
+            className="button-close ml-auto"
+            onClick={() => history.goBack()}
+          >
+            <GrClose size={24} />
+          </div>
         </Col>
       </Row>
-
       <Row>
-        <Col sm={3}>
-          <h3>Placar</h3>
+        <Col sm={3} className="pt-3">
           {players.map(player => (
-            <p key={player.id} className="boxed">
-              <strong>{player.name}</strong>
-              <br />
-              {player.score} Pontos{' '}
-              {player.wins > 0 ? `| ${player.wins} vitórias` : ''}
-            </p>
+            <div key={player.id} className="card-room mt-3 mb-3">
+              <Row className="p-3">
+                <Col>
+                  <img height={64} src={player.avatar} alt="avatar" />
+                </Col>
+                <Col>
+                  <Row className="label-pontuacao">{player.name}</Row>
+                  <Row className="label-pontuacao">{player.score} pts</Row>
+                </Col>
+              </Row>
+            </div>
           ))}
         </Col>
         <Col sm={9}>
           <Row>
-            <Col xs={12} className="mb-3">
+            <Col xs={12} className="mt-3 mb-3">
               <h3>Música</h3>
-              <p className="boxed">
+              <p className="chat-box boxed p-3">
                 Gênero: Rock
                 <br />
                 Quantidade de letras no nome da música: 7<br />
-                Quantidade de letras no nome do autor: 7<br />
-                Tempo: 7:00
+                Quantidade de letras no nome do autor: 7
               </p>
             </Col>
-            <Col sm={12} md={6}>
+            <Col sm={12} md={6} className="mt-3 mb-3">
               <h3>Repostas</h3>
-              <Textarea value={[]}></Textarea>
-              <Form onSubmit={sendAnswer}>
-                <InputGroup>
+              <Form onSubmit={sendAnswer} className="chat-box p-3">
+                <Textarea value={[]}></Textarea>
+                <InputGroup className="chat-input">
                   <Form.Control
+                    className="chat-control"
                     value={currentAnswer}
                     onChange={e => setCurrentAnswer(e.currentTarget.value)}
                     placeholder="Escreva sua resposta aqui..."
                   />
-                  <Button variant="dark" type="submit">
-                    ENVIAR
-                  </Button>
+                  <AiOutlineSend size={24} />
                 </InputGroup>
               </Form>
             </Col>
-            <Col sm={12} md={6}>
+            <Col sm={12} md={6} className="mt-3 mb-3">
               <h3>Bate-papo</h3>
-              <Textarea value={messages}></Textarea>
-              <Form onSubmit={sendMessage}>
-                <InputGroup>
+              <Form onSubmit={sendMessage} className="chat-box p-3">
+                <Textarea value={messages}></Textarea>
+                <InputGroup className="chat-input">
                   <Form.Control
+                    className="chat-control"
                     value={currentMsg}
                     onChange={e => setCurrentMsg(e.currentTarget.value)}
                     placeholder="Escreva sua mensagem aqui..."
                   />
-                  <Button variant="secondary" type="submit">
-                    ENVIAR
-                  </Button>
+                  <AiOutlineSend size={24} />
                 </InputGroup>
               </Form>
             </Col>

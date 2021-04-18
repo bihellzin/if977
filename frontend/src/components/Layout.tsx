@@ -1,10 +1,10 @@
 import React from 'react';
 import { Figure, Container } from 'react-bootstrap';
-import background from '../assets/background.svg';
+import background from '../assets/background.png';
 
 const Layout: React.FC = ({ children }) => {
   return (
-    <Container>
+    <Container id="wrap">
       <Figure style={{ position: 'absolute' }}>
         <Figure.Image alt="Background" src={background} />
       </Figure>
