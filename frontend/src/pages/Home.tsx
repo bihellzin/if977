@@ -9,8 +9,9 @@ import {
   Card,
   InputGroup,
   Pagination,
+  Container,
 } from 'react-bootstrap';
-import Carousel from '../components/Carousel';
+import { FiSearch } from 'react-icons/fi';
 
 const Home: React.FC = () => {
   const history = useHistory();
@@ -33,56 +34,92 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Carousel />
-      <Form>
-        <Form.Row>
-          <Col xs={12} md={6} className="mb-3">
-            <Form.Label>Nickname</Form.Label>
-            <InputGroup>
-              <Form.Control
-                value={nickname}
-                onChange={e => setNickname(e.target.value)}
-                placeholder="Escreva seu nickname"
-              />
-            </InputGroup>
-          </Col>
-          <Col xs={12} md={6} className="mb-3">
-            <Form.Label>Buscar sala</Form.Label>
-            <InputGroup>
-              <Form.Control
-                value={keyword}
-                onChange={e => setKeyword(e.target.value)}
-                placeholder="Buscar sala"
-              />
-            </InputGroup>
-          </Col>
-        </Form.Row>
-      </Form>
-      <CardColumns>
-        {rooms.map(room => {
-          return (
-            <Card
-              key={room.code}
-              className={
-                selectedRoom === room.code
-                  ? 'hover-pointer bg-secondary text-white text-center'
-                  : 'hover-pointer text-center'
-              }
-              onClick={() => handleRoomClick(room.code)}
-            >
-              <Card.Body>
-                <Card.Title>{room.name}</Card.Title>
-                <Card.Text>
-                  <small>
-                    Tema: {room.theme} | Jogadores: {room.players} | Criado por:{' '}
-                    {room.owner}
-                  </small>
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          );
-        })}
-      </CardColumns>
+      <Row className="justify-content-center pt-3">
+        <Col xs={2}></Col>
+        <Col xs={8} md={4}>
+          <Form>
+            <Form.Row className="mb-3">
+              <InputGroup className="search-box">
+                <Form.Control
+                  className="input-control"
+                  value={keyword}
+                  onChange={e => setKeyword(e.target.value)}
+                  placeholder="Pesquisar uma sala"
+                />
+                <FiSearch size={24} />
+              </InputGroup>
+            </Form.Row>
+          </Form>
+        </Col>
+        <Col xs={2}>
+          <FiSearch size={24} />
+        </Col>
+      </Row>
+      <Row className="justify-content-center pt-3">
+        <Col xs={10}>
+          <CardColumns>
+            {rooms.map(room => {
+              return (
+                <Card
+                  key={room.code}
+                  className={
+                    selectedRoom === room.code
+                      ? 'card-room-selected'
+                      : 'card-room'
+                  }
+                  onClick={() => handleRoomClick(room.code)}
+                >
+                  <Card.Body>
+                    <Card.Title className="label-black text-center">
+                      Sala do {room.owner}
+                    </Card.Title>
+                    <Row>
+                      <Col xs={6}>
+                        <Card.Text className="label-grey text-center">
+                          Jogadores: {room.players}
+                        </Card.Text>
+                      </Col>
+                      <Col xs={6}>
+                        <Card.Text className="label-grey text-center">
+                          Gênero: {room.theme}
+                        </Card.Text>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              );
+            })}
+          </CardColumns>
+
+          <Row xs={12} className="justify-content-center pt-3">
+            <Col xs={6}>x</Col>
+            <Col xs={6}>x</Col>
+            <Col xs={6} md={4} className="mb-3">
+              <Button
+                className="button-default"
+                variant="primary"
+                onClick={() => history.push('/room/test')}
+                size="lg"
+                block
+              >
+                CRIAR SALA
+              </Button>
+            </Col>
+            <Col xs={6} md={4} className="mb-3">
+              <Button
+                className="button-default"
+                variant="primary"
+                onClick={() => history.push('/room/test')}
+                size="lg"
+                block
+              >
+                ENTRAR
+              </Button>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+
       <Row>
         <Col>
           <Pagination className="justify-content-center">
@@ -102,38 +139,6 @@ const Home: React.FC = () => {
             />
             <Pagination.Last onClick={() => setPage(rooms.length)} />
           </Pagination>
-        </Col>
-      </Row>
-      <Row xs={12}>
-        <Col xs={12} md={3} className="mb-3">
-          <Button
-            variant="outline-secondary"
-            onClick={() => history.push('/room/test')}
-            size="lg"
-            block
-          >
-            CRIAR SALA
-          </Button>
-        </Col>
-        <Col xs={12} md={3} className="mb-3">
-          <Button
-            variant="outline-secondary"
-            onClick={() => history.push('/room/test')}
-            size="lg"
-            block
-          >
-            SALA DE TESTE
-          </Button>
-        </Col>
-        <Col xs={12} md={6} className="mb-3">
-          <Button
-            variant="primary"
-            onClick={() => history.push('/room/test')}
-            size="lg"
-            block
-          >
-            JOGAR
-          </Button>
         </Col>
       </Row>
     </>

@@ -10,9 +10,9 @@ function Routes() {
     <BrowserRouter>
       <Layout>
         <Switch>
-          <Route path="/" component={Home} exact />
+          <Route path="/" component={Auth} exact />
           <Route path="/room/:id" component={Room} exact />
-          <Route path="/auth" component={Auth} exact />
+          <Route path="/lobby" component={Home} exact />
           <Route path="/about" component={About} exact />
         </Switch>
       </Layout>

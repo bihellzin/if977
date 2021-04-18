@@ -8,6 +8,9 @@ body {
 #root {
   height: 100%;
   margin: 0 auto;
+
+  background: linear-gradient(180deg, #05a3a4 0%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient(0deg, rgba(8, 223, 133, 0.83), rgba(8, 223, 133, 0.83));
 }
 
 * {
@@ -31,4 +34,96 @@ body {
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   padding: 5px;
+}
+
+.input-login {
+  background: #fffdfd;
+  border-radius: 25px;
+}
+
+.button-default {
+  background: #080d8e;
+  border-radius: 50px;
+}
+
+.label-white {
+  position: absolute;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 29px;
+  color: #ffffff;
+  border: 1px solid #000000;
+}
+
+.label-black {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 27px;
+  line-height: 32px;
+  color: #18191f;
+}
+
+.card-room {
+  background: #ffffff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 0px #18191f;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.card-room-selected {
+  background: #080d8e;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 0px #18191f;
+  border-radius: 16px;
+}
+
+.card-room-selected * {
+  color: white !important;
+}
+
+.label-grey {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 20px;
+  color: #474a57;
+}
+
+.arrow {
+  position: absolute;
+  background: #ffffff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+}
+
+.button-close {
+  background: #ff522d;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+}
+
+.search-box {
+  background: #ffffff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0px 4px 0px #18191f;
+  border-radius: 16px;
+  justify-content: center;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.input-control {
+  border: 0;
+  text-align: center;
 }
