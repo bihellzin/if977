@@ -48,6 +48,7 @@
     "web-vitals": "^1.0.1"
   },
   "devDependencies": {
+    "@types/react-router": "^5.1.13",
     "@types/react-router-dom": "^5.1.7",
     "@types/styled-components": "^5.1.7"
   }
