@@ -37,12 +37,20 @@ body {
 }
 
 .input-login {
+<<<<<<< HEAD
   background: #fffdfd;
+=======
+  background: #FFFDFD;
+>>>>>>> 6065ecb34f1bc83e199de0aee7cb206a7d7b5135
   border-radius: 25px;
 }
 
 .button-default {
+<<<<<<< HEAD
   background: #080d8e;
+=======
+  background: #080D8E;
+>>>>>>> 6065ecb34f1bc83e199de0aee7cb206a7d7b5135
   border-radius: 50px;
 }
 
