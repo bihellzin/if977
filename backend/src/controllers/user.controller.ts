@@ -8,8 +8,6 @@ import { User } from '../models/user.model';
 export class UserController {
   public router = Router();
   public path = '/user';
-  private userRepository = getRepository(User);
-  private roomRepository = getRepository(Room);
 
   constructor() {
     this.router.get(this.path, JwtAuth, asyncHandler(this.findAll));
@@ -22,7 +20,8 @@ export class UserController {
   async findAll(req: Request, res: Response) {
     const offset = parseInt((req.query.offset as string) || '0');
     const limit = Math.max(parseInt((req.query.limit as string) || '5'), 25);
-    const [data, total] = await this.userRepository.findAndCount({
+    const userRepository = getRepository(User);
+    const [data, total] = await userRepository.findAndCount({
       skip: offset,
       take: limit,
     });
@@ -31,7 +30,8 @@ export class UserController {
 
   async findOne(req: Request, res: Response) {
     const { id } = req.params;
-    const user = await this.userRepository.findOne(id);
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOne(id);
     if (!user) {
       throw new HttpException(404, 'User not found!');
     }
@@ -40,9 +40,11 @@ export class UserController {
 
   async create(req: Request, res: Response) {
     const { nickname, avatar, roomId } = req.body;
-    const user = this.userRepository.create({ nickname, avatar });
+    const userRepository = getRepository(User);
+    const roomRepository = getRepository(Room);
+    const user = userRepository.create({ nickname, avatar });
     if (roomId) {
-      const room = await this.roomRepository.findOne(roomId);
+      const room = await roomRepository.findOne(roomId);
       if (!room) {
         throw new HttpException(404, 'Room not found!');
       }
@@ -50,21 +52,23 @@ export class UserController {
     } else {
       user.room = null as any;
     }
-    const data = await this.userRepository.save(user);
+    const data = await userRepository.save(user);
     return res.status(201).json({ data });
   }
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
     const { nickname, avatar, roomId } = req.body;
-    const user = await this.userRepository.findOne(id);
+    const userRepository = getRepository(User);
+    const roomRepository = getRepository(Room);
+    const user = await userRepository.findOne(id);
     if (!user) {
       throw new HttpException(404, 'User not found!');
     }
     user.nickname = nickname;
     user.avatar = avatar;
     if (roomId) {
-      const room = await this.roomRepository.findOne(roomId);
+      const room = await roomRepository.findOne(roomId);
       if (!room) {
         throw new HttpException(404, 'Room not found!');
       }
@@ -72,17 +76,18 @@ export class UserController {
     } else {
       user.room = null as any;
     }
-    const data = await this.userRepository.save(user);
+    const data = await userRepository.save(user);
     return res.status(200).json({ data });
   }
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;
-    const user = await this.userRepository.findOne(id);
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOne(id);
     if (!user) {
       throw new HttpException(404, 'User not found!');
     }
-    const result = await this.userRepository.findOne(id);
+    const result = await userRepository.findOne(id);
     return res.status(200).json({ data: Boolean(result) });
   }
 }
