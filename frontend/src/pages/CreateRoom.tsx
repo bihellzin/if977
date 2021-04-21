@@ -20,7 +20,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="pt-3">
+    <div className="pt-3 pb-5">
       <Row>
         <Col xs={12}>
           <div
@@ -31,7 +31,7 @@ const Home: React.FC = () => {
           </div>
         </Col>
       </Row>
-      <Row className="justify-content-center pt-3">
+      <Row className="justify-content-center pt-5">
         <Col xs={10}>
           <CardColumns>
             {rooms.map(room => {
