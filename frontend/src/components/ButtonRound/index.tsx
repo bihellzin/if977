@@ -3,6 +3,7 @@ import {
   FiChevronRight,
   FiChevronLeft,
 } from 'react-icons/all';
+import './styles.scss';
 
 type Props = {
   className?: string;

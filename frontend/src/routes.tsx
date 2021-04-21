@@ -1,9 +1,9 @@
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Auth from './pages/Auth';
+import CreateRoom from './pages/CreateRoom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Room from './pages/Room';
-import Auth from './pages/Auth';
-import CreateRoom from './pages/CreateRoom';
 
 function Routes() {
   return (

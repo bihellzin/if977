@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router';
 import { CardColumns, Col, Row, Button, Card } from 'react-bootstrap';
 import { GrClose } from 'react-icons/all';
+import './styles.scss';
 
 const Home: React.FC = () => {
   const history = useHistory();

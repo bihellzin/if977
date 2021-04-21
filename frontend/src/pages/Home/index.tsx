@@ -15,7 +15,8 @@ import {
   FiChevronRight,
   FiChevronLeft,
 } from 'react-icons/all';
-import ButtonRound from '../components/ButtonRound';
+import ButtonRound from 'components/ButtonRound';
+import './styles.scss';
 
 const Home: React.FC = () => {
   const history = useHistory();
