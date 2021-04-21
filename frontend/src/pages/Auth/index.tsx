@@ -43,6 +43,7 @@ const AuthPage: React.FC = () => {
   const handlerPlay: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
     if (nickname.length >= 3 && nickname.length <= 8) {
+      console.log('hello');
       const response = await client.post('/auth', { nickname, avatar });
       if (response.status === 201) {
         const { data, token } = response.data;

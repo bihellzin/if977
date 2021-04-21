@@ -1,6 +1,4 @@
-import {EventSubscriber, EntitySubscriberInterface} from "typeorm";
+import { EventSubscriber, EntitySubscriberInterface } from 'typeorm';
 
 @EventSubscriber()
-export class genre implements EntitySubscriberInterface<any> {
-
-}
+export class genre implements EntitySubscriberInterface<any> {}
