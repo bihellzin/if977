@@ -112,7 +112,7 @@ function Room() {
         </Col>
       </Row>
       <Row>
-        <Col sm={3} className="pt-3">
+        <Col xs={12} sm={3} className="pt-3">
           {players.map(player => (
             <div key={player.id} className="card-room mt-3 mb-3">
               <Row className="p-3">
@@ -138,7 +138,7 @@ function Room() {
                 Quantidade de letras no nome do autor: 7
               </p>
             </Col>
-            <Col sm={12} md={6} className="mt-3 mb-3">
+            <Col sm={6} className="mb-3">
               <h3>Repostas</h3>
               <Form onSubmit={sendAnswer} className="chat-box p-3">
                 <Textarea value={[]}></Textarea>
@@ -153,7 +153,7 @@ function Room() {
                 </InputGroup>
               </Form>
             </Col>
-            <Col sm={12} md={6} className="mt-3 mb-3">
+            <Col sm={6} className="mb-3">
               <h3>Bate-papo</h3>
               <Form onSubmit={sendMessage} className="chat-box p-3">
                 <Textarea value={messages}></Textarea>
