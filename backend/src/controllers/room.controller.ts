@@ -9,7 +9,7 @@ import { User } from '../models/user.model';
 
 export class RoomController {
   public router = Router();
-  public path = '/user';
+  public path = '/room';
 
   constructor() {
     this.router.get(this.path, JwtAuth, asyncHandler(this.findAll));
