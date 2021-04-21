@@ -1,15 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router';
-import {
-  CardColumns,
-  Col,
-  Row,
-  Button,
-  Card,
-} from 'react-bootstrap';
-import {
-  GrClose,
-} from 'react-icons/all';
+import { CardColumns, Col, Row, Button, Card } from 'react-bootstrap';
+import { GrClose } from 'react-icons/all';
 
 const Home: React.FC = () => {
   const history = useHistory();
@@ -28,8 +20,8 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="pt-5">
-      <Row className="pt-5">
+    <div className="pt-3 pb-5">
+      <Row>
         <Col xs={12}>
           <div
             className="button-close ml-auto"
@@ -72,7 +64,7 @@ const Home: React.FC = () => {
                 size="lg"
                 block
               >
-                CREATE ROOM
+                CRIAR SALA
               </Button>
             </Col>
             <Col xs={12} md={4} className="mt-3 mb-3">

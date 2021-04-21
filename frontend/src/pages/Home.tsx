@@ -36,7 +36,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="d-flex flex-column pt-5">
+    <div className="d-flex flex-column pt-3">
       <Row className="pt-3">
         <Col xs={12}>
           <div

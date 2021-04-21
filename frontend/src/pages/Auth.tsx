@@ -16,7 +16,7 @@ const AuthPage: React.FC = () => {
   const history = useHistory();
   return (
     <>
-      <div className="d-flex flex-column mt-5 pt-5">
+      <div className="d-flex flex-column mt-3 pt-3">
         <Col>
           <Row className="justify-content-center">
             <Figure>
@@ -39,7 +39,10 @@ const AuthPage: React.FC = () => {
             <Form>
               <Form.Row>
                 <InputGroup className="search-box mb-3">
-                  <FormControl className="input-control" placeholder="Nickname" />
+                  <FormControl
+                    className="input-control"
+                    placeholder="Nickname"
+                  />
                 </InputGroup>
               </Form.Row>
               <Form.Row>
