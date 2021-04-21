@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { getRepository } from 'typeorm';
 import { asyncHandler } from '../middlewares/errorHandler';
-import { Player } from '../models/player.model';
+import { Player } from '../models/genre.model';
 
 export class PlayerController {
   public router = Router();

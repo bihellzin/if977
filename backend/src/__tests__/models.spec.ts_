@@ -1,11 +1,11 @@
 import { Repository } from 'typeorm';
 import faker from 'faker';
-import Database from '../databases';
+import Database from '../services/database';
 import { User } from '../models/user.model';
 import { Room } from '../models/room.model';
 import { Player } from '../models/player.model';
 import { Message } from '../models/message.model';
-import { Match } from '../models/match.model';
+import { Match } from '../models/podium.model';
 import { Goal } from '../models/goal.model';
 import { Music } from '../models/music.model';
 import { Play } from '../models/play.model';

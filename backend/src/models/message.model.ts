@@ -1,29 +1,41 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { Player } from './player.model';
+import { IsNotEmpty, Length, validateOrReject } from 'class-validator';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Room } from './room.model';
+import { User } from './user.model';
 
-@Entity({ name: 'messages' })
+@Entity()
 export class Message {
-  @PrimaryColumn('uuid')
-  playerUserId: string;
+  @PrimaryGeneratedColumn()
+  readonly id: number;
 
-  @PrimaryColumn('uuid')
-  playerRoomCode: string;
-
+  @Length(1, 255)
   @Column()
-  message: string;
+  content: string;
 
-  @PrimaryColumn({ default: 'now()' })
-  sendedAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
   // Relations
-  @ManyToOne(() => Player, player => player.messages, {
-    primary: true,
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn([
-    { name: 'playerRoomCode', referencedColumnName: 'roomCode' },
-    { name: 'playerUserId', referencedColumnName: 'userId' },
-  ])
-  player: Player;
+  @ManyToOne(() => User, user => user.messages, { nullable: false })
+  user: User;
+
+  @ManyToOne(() => Room, room => room.messages, { nullable: false })
+  room: Room;
+
+  // Validation
+  @BeforeInsert()
+  @BeforeUpdate()
+  async validate() {
+    await validateOrReject(this, { skipUndefinedProperties: true });
+  }
 }

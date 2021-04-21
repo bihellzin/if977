@@ -1,21 +1,23 @@
+import { validateOrReject } from 'class-validator';
 import {
   BaseEntity,
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
-  Index,
-  PrimaryColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Goal } from './goal.model';
+import { Genre } from './genre.model';
 import { Play } from './play.model';
+import { Room } from './room.model';
 
-@Entity({ name: 'musics' })
-@Index((music: Music) => [music.name, music.author], { unique: true })
+@Entity()
 export class Music extends BaseEntity {
-  @PrimaryColumn()
-  url: string;
+  @PrimaryGeneratedColumn()
+  readonly id: number;
 
   @Column()
   name: string;
@@ -23,16 +25,23 @@ export class Music extends BaseEntity {
   @Column()
   author: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Column()
+  url: string;
 
   // Relations
-  @OneToMany(() => Goal, goal => goal.music)
-  goals: Goal[];
+  @ManyToOne(() => Genre, genre => genre.rooms, { nullable: false })
+  genre: Genre;
+
+  @OneToMany(() => Room, room => room.music)
+  rooms: Room[];
 
   @OneToMany(() => Play, play => play.music)
   plays: Play[];
+
+  // Validation
+  @BeforeInsert()
+  @BeforeUpdate()
+  async validate() {
+    await validateOrReject(this, { skipUndefinedProperties: true });
+  }
 }

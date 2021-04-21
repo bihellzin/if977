@@ -1,53 +1,52 @@
+import { validateOrReject } from 'class-validator';
 import {
   BaseEntity,
-  Column,
+  BeforeInsert,
+  BeforeUpdate,
   CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
-import { Player } from './player.model';
+import { Genre } from './genre.model';
+import { Message } from './message.model';
+import { Music } from './music.model';
+import { Play } from './play.model';
 import { User } from './user.model';
-import { Match } from './match.model';
 
-@Entity({ name: 'rooms' })
+@Entity()
 export class Room extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
-  code: string;
-
-  @Column('uuid')
-  ownerId: string;
-
-  @Column()
-  theme: string;
-
-  @Column()
-  name: string;
+  @PrimaryGeneratedColumn()
+  readonly id: number;
 
   @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  startedAt: Date;
 
   // Relations
-  @ManyToOne(() => User, user => user.ownerRooms, {
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'ownerId' })
+  @ManyToOne(() => Genre, genre => genre.rooms, { nullable: false })
+  genre: Genre;
+
+  @ManyToOne(() => User, user => user.ownerRooms, { nullable: false })
   owner: User;
 
-  @OneToMany(() => Player, player => player.room, {
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  })
-  players: Player[];
+  @ManyToOne(() => Music, music => music.rooms, { nullable: true })
+  music?: Music;
 
-  @OneToMany(() => Match, match => match.room)
-  matches: Match[];
+  @OneToMany(() => User, player => player.room)
+  players: User[];
+
+  @OneToMany(() => Message, message => message.user)
+  messages: Message[];
+
+  @OneToMany(() => Play, play => play.user)
+  plays: Play[];
+
+  // Validation
+  @BeforeInsert()
+  @BeforeUpdate()
+  async validate() {
+    await validateOrReject(this, { skipUndefinedProperties: true });
+  }
 }

@@ -2,7 +2,7 @@ import App from '../app';
 import supertest from 'supertest';
 import express from 'express';
 import { UserController } from './../controllers/user.controller';
-import Database from '../databases';
+import Database from '../services/database';
 import faker from 'faker';
 import typeorm from 'typeorm';
 

@@ -1,72 +1,52 @@
 import {
   BaseEntity,
+  BeforeInsert,
+  BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Player } from './player.model';
-import { Match } from './match.model';
+import { Podium } from './podium.model';
 import { Music } from './music.model';
+import { User } from './user.model';
+import { Room } from './room.model';
+import { Length, validateOrReject } from 'class-validator';
 
-@Entity({ name: 'plays' })
+@Entity()
 export class Play extends BaseEntity {
-  @PrimaryColumn('uuid')
-  playerUserId: string;
+  @PrimaryGeneratedColumn()
+  readonly id: number;
 
-  @PrimaryColumn('uuid')
-  playerRoomCode: string;
-
-  @PrimaryColumn('uuid')
-  matchRoomCode: string;
-
-  @PrimaryColumn()
-  matchRound: number;
-
-  @PrimaryColumn()
-  musicUrl: string;
-
+  @Length(1, 255)
   @Column()
   answer: string;
-
-  @Column({ nullable: true })
-  position: number;
 
   @Column({ default: 0 })
   accuracy: number;
 
-  @PrimaryColumn({ default: 'now()' })
-  answeredAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
   // Relations
-  @ManyToOne(() => Player, player => player.plays, {
-    primary: true,
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn([
-    { name: 'playerUserId', referencedColumnName: 'userId' },
-    { name: 'playerRoomCode', referencedColumnName: 'roomCode' },
-  ])
-  player: Player;
+  @ManyToOne(() => User, user => user.plays, { nullable: false })
+  user: User;
 
-  @ManyToOne(() => Match, match => match.plays, {
-    primary: true,
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn([
-    { name: 'matchRoomCode', referencedColumnName: 'roomCode' },
-    { name: 'matchRound', referencedColumnName: 'round' },
-  ])
-  match: Match;
+  @ManyToOne(() => Room, room => room.plays, { nullable: false })
+  room: Room;
 
-  @ManyToOne(() => Music, music => music.plays, {
-    primary: true,
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'musicUrl', referencedColumnName: 'url' })
+  @ManyToOne(() => Music, music => music.plays, { nullable: false })
   music: Music;
+
+  @ManyToOne(() => Podium, podium => podium.plays, { nullable: true })
+  podium: Podium;
+
+  // Validation
+  @BeforeInsert()
+  @BeforeUpdate()
+  async validate() {
+    await validateOrReject(this, { skipUndefinedProperties: true });
+  }
 }

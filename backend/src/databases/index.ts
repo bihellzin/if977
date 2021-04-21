@@ -9,21 +9,26 @@ class Database {
   static connection: Connection;
 
   static async getConnection() {
+    if (Database.connection == null || !Database.connection.isConnected) {
+      await createConnection();
+    }
     return Database.connection;
   }
 
   static async createConnection() {
-    const defaultOptions = await getConnectionOptions();
+    if (Database.connection == null || !Database.connection.isConnected) {
+      const defaultOptions = await getConnectionOptions();
 
-    Database.connection = await createConnection(
-      Object.assign(defaultOptions, {
-        type: 'postgres',
-        url: process.env.DATABASE_URL,
-        synchronize: true,
-        dropSchema: process.env.NODE_ENV == 'test',
-        // logging: process.env.NODE_ENV != 'test',
-      } as ConnectionOptions),
-    );
+      Database.connection = await createConnection(
+        Object.assign(defaultOptions, {
+          type: 'sqlite',
+          database: ':memory:',
+          synchronize: true,
+          dropSchema: process.env.NODE_ENV == 'test',
+          logging: process.env.NODE_ENV != 'test',
+        } as ConnectionOptions),
+      );
+    }
     return Database.connection;
   }
 }
