@@ -1,19 +1,22 @@
 import { Request, Response, Router } from 'express';
 import { getRepository } from 'typeorm';
 import HttpException, { asyncHandler } from '../middlewares/errorHandler';
+import { JwtAuth } from '../middlewares/passport';
+import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 
 export class UserController {
   public router = Router();
   public path = '/user';
   private userRepository = getRepository(User);
+  private roomRepository = getRepository(Room);
 
   constructor() {
-    this.router.get(this.path, asyncHandler(this.findAll));
-    this.router.get(`${this.path}/:id`, asyncHandler(this.findOne));
-    this.router.post(this.path, asyncHandler(this.create));
-    this.router.patch(`${this.path}/:id`, asyncHandler(this.update));
-    this.router.delete(`${this.path}/:id`, asyncHandler(this.delete));
+    this.router.get(this.path, JwtAuth, asyncHandler(this.findAll));
+    this.router.get(`${this.path}/:id`, JwtAuth, asyncHandler(this.findOne));
+    this.router.post(this.path, JwtAuth, asyncHandler(this.create));
+    this.router.patch(`${this.path}/:id`, JwtAuth, asyncHandler(this.update));
+    this.router.delete(`${this.path}/:id`, JwtAuth, asyncHandler(this.delete));
   }
 
   async findAll(req: Request, res: Response) {
@@ -28,37 +31,57 @@ export class UserController {
 
   async findOne(req: Request, res: Response) {
     const { id } = req.params;
-    const data = await this.userRepository.findOne(id);
-    return res.status(200).json({ data });
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new HttpException(404, 'User not found!');
+    }
+    return res.status(200).json({ data: user });
   }
 
   async create(req: Request, res: Response) {
-    const { nickname, avatar } = req.body;
+    const { nickname, avatar, roomId } = req.body;
     const user = this.userRepository.create({ nickname, avatar });
+    if (roomId) {
+      const room = await this.roomRepository.findOne(roomId);
+      if (!room) {
+        throw new HttpException(404, 'Room not found!');
+      }
+      user.room = room;
+    } else {
+      user.room = null as any;
+    }
     const data = await this.userRepository.save(user);
     return res.status(201).json({ data });
   }
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
-    const { nickname, avatar } = req.body;
-    const data = await this.userRepository.findOne(id);
-    if (!data) {
-      throw new HttpException(404, 'Resource not found!');
+    const { nickname, avatar, roomId } = req.body;
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new HttpException(404, 'User not found!');
     }
-    data.nickname = nickname;
-    data.avatar = avatar;
-    await this.userRepository.save(data);
-    return res.status(200).json({ data: true });
+    user.nickname = nickname;
+    user.avatar = avatar;
+    if (roomId) {
+      const room = await this.roomRepository.findOne(roomId);
+      if (!room) {
+        throw new HttpException(404, 'Room not found!');
+      }
+      user.room = room;
+    } else {
+      user.room = null as any;
+    }
+    const data = await this.userRepository.save(user);
+    return res.status(200).json({ data });
   }
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;
-    const data = await this.userRepository.findOne(id);
-    if (!data) {
-      throw new HttpException(404, 'Resource not found!');
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new HttpException(404, 'User not found!');
     }
-    await data.remove();
     const result = await this.userRepository.findOne(id);
     return res.status(200).json({ data: Boolean(result) });
   }
