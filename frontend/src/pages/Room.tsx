@@ -4,12 +4,6 @@ import { SocketContext } from '../services/socket';
 import Textarea from '../components/Textarea';
 import { Row, Col, Form, InputGroup } from 'react-bootstrap';
 import { GrClose, AiOutlineSend } from 'react-icons/all';
-import avatar1 from '../assets/avatar-1.png';
-import avatar2 from '../assets/avatar-2.png';
-import avatar3 from '../assets/avatar-3.png';
-import avatar4 from '../assets/avatar-4.png';
-import avatar5 from '../assets/avatar-5.png';
-import avatar6 from '../assets/avatar-6.png';
 
 function Room() {
   const history = useHistory();
@@ -24,35 +18,35 @@ function Room() {
     {
       id: '1',
       name: 'Player 1',
-      avatar: avatar1,
+      avatar: '/avatars/avatar-1.png',
       score: 99,
       wins: 1,
     },
     {
       id: '2',
       name: 'Player 2',
-      avatar: avatar2,
+      avatar: '/avatars/avatar-2.png',
       score: 80,
       wins: 0,
     },
     {
       id: '3',
       name: 'Player 3',
-      avatar: avatar3,
+      avatar: '/avatars/avatar-3.png',
       score: 75,
       wins: 0,
     },
     {
       id: '4',
       name: 'Player 4',
-      avatar: avatar4,
+      avatar: '/avatars/avatar-4.png',
       score: 75,
       wins: 0,
     },
     {
       id: '5',
       name: 'Player 5',
-      avatar: avatar5,
+      avatar: '/avatars/avatar-5.png',
       score: 75,
       wins: 0,
     },
