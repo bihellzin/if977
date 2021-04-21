@@ -16,44 +16,46 @@ const AuthPage: React.FC = () => {
   const history = useHistory();
   return (
     <>
-      <Col>
-        <Row className="justify-content-center">
-          <Figure>
-            <Figure.Image alt="Avatar" src={logo} />
-          </Figure>
-        </Row>
-      </Col>
-      <Row className="justify-content-center">
-        <Col md={2}>
+      <div className="d-flex flex-column mt-5 pt-5">
+        <Col>
           <Row className="justify-content-center">
             <Figure>
-              <Figure.Image
-                width={160}
-                height={160}
-                alt="Avatar"
-                src={avatar1}
-              />
+              <Figure.Image alt="Avatar" src={logo} />
             </Figure>
           </Row>
-          <Form>
-            <Form.Row>
-              <InputGroup className="search-box mb-3">
-                <FormControl className="input-control" placeholder="Nickname" />
-              </InputGroup>
-            </Form.Row>
-            <Form.Row>
-              <Button
-                className="button-default"
-                variant="primary"
-                onClick={() => history.push('/lobby')}
-                block
-              >
-                JOGAR
-              </Button>
-            </Form.Row>
-          </Form>
         </Col>
-      </Row>
+        <Row className="justify-content-center">
+          <Col md={2}>
+            <Row className="justify-content-center">
+              <Figure>
+                <Figure.Image
+                  width={160}
+                  height={160}
+                  alt="Avatar"
+                  src={avatar1}
+                />
+              </Figure>
+            </Row>
+            <Form>
+              <Form.Row>
+                <InputGroup className="search-box mb-3">
+                  <FormControl className="input-control" placeholder="Nickname" />
+                </InputGroup>
+              </Form.Row>
+              <Form.Row>
+                <Button
+                  className="button-default mt-1"
+                  variant="primary"
+                  onClick={() => history.push('/lobby')}
+                  block
+                >
+                  JOGAR
+                </Button>
+              </Form.Row>
+            </Form>
+          </Col>
+        </Row>
+      </div>
     </>
   );
 };

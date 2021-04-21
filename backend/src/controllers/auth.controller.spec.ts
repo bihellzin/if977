@@ -1,6 +1,5 @@
 import supertest from 'supertest';
 import typeorm from 'typeorm';
-import faker from 'faker';
 import express from 'express';
 import App from '../app';
 import Database from '../databases';
