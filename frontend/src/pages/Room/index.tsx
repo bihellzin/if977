@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { SocketContext } from '../services/socket';
-import Textarea from '../components/Textarea';
+import { SocketContext } from 'services/socket';
+import Textarea from 'components/TextArea';
 import { Row, Col, Form, InputGroup } from 'react-bootstrap';
 import { GrClose, AiOutlineSend } from 'react-icons/all';
+import './styles.scss';
 
 function Room() {
   const history = useHistory();
