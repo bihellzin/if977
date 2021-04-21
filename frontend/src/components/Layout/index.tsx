@@ -1,6 +1,7 @@
 import React from 'react';
 import { Figure, Container } from 'react-bootstrap';
-import background from '../assets/background.png';
+import background from 'assets/background.png';
+import './styles.scss';
 
 const Layout: React.FC = ({ children }) => {
   return (

@@ -15,6 +15,8 @@ import {
   FiChevronRight,
   FiChevronLeft,
 } from 'react-icons/all';
+import ButtonRound from 'components/ButtonRound';
+import './styles.scss';
 
 const Home: React.FC = () => {
   const history = useHistory();
@@ -102,20 +104,19 @@ const Home: React.FC = () => {
 
           <Row xs={12} className="justify-content-center pt-3">
             <Col xs={6}>
-              <div
-                className="button-round"
+              <ButtonRound
+                direction="left"
                 onClick={() => setPage(Math.max(page - 1, 1))}
-              >
-                <FiChevronLeft size={24} />
-              </div>
+                size={24}
+              />
             </Col>
             <Col xs={6}>
-              <div
-                className="button-round ml-auto"
+              <ButtonRound
+                className="ml-auto"
+                direction="right"
                 onClick={() => setPage(Math.min(page + 1, rooms.length))}
-              >
-                <FiChevronRight size={24} />
-              </div>
+                size={24}
+              />
             </Col>
             <Col xs={12} md={4} className="mt-3 mb-3">
               <Button

@@ -26,6 +26,9 @@ class Database {
           synchronize: true,
           dropSchema: process.env.NODE_ENV == 'test',
           logging: process.env.NODE_ENV != 'test',
+          ...(process.env.NODE_ENV == 'production'
+            ? { type: 'postgres', url: process.env.DATABASE_URL }
+            : {}),
         } as ConnectionOptions),
       );
     }

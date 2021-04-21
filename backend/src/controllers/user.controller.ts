@@ -21,10 +21,6 @@ export class UserController {
     const userRepository = getRepository(User);
     const offset = parseInt((req.query.offset as string) || '0');
     const limit = Math.max(parseInt((req.query.limit as string) || '5'), 25);
-<<<<<<< HEAD
-=======
-    const userRepository = getRepository(User);
->>>>>>> f2809b69da0fda4031f3d4dd4f12ac911906ab39
     const [data, total] = await userRepository.findAndCount({
       skip: offset,
       take: limit,
@@ -35,10 +31,6 @@ export class UserController {
   async findOne(req: Request, res: Response) {
     const userRepository = getRepository(User);
     const { id } = req.params;
-<<<<<<< HEAD
-=======
-    const userRepository = getRepository(User);
->>>>>>> f2809b69da0fda4031f3d4dd4f12ac911906ab39
     const user = await userRepository.findOne(id);
     if (!user) {
       throw new HttpException(404, 'User not found!');
@@ -51,11 +43,6 @@ export class UserController {
     const roomRepository = getRepository(Room);
 
     const { nickname, avatar, roomId } = req.body;
-<<<<<<< HEAD
-=======
-    const userRepository = getRepository(User);
-    const roomRepository = getRepository(Room);
->>>>>>> f2809b69da0fda4031f3d4dd4f12ac911906ab39
     const user = userRepository.create({ nickname, avatar });
     if (roomId) {
       const room = await roomRepository.findOne(roomId);
@@ -75,11 +62,6 @@ export class UserController {
     const roomRepository = getRepository(Room);
     const { id } = req.params;
     const { nickname, avatar, roomId } = req.body;
-<<<<<<< HEAD
-=======
-    const userRepository = getRepository(User);
-    const roomRepository = getRepository(Room);
->>>>>>> f2809b69da0fda4031f3d4dd4f12ac911906ab39
     const user = await userRepository.findOne(id);
     if (!user) {
       throw new HttpException(404, 'User not found!');
@@ -102,22 +84,14 @@ export class UserController {
   async delete(req: Request, res: Response) {
     const userRepository = getRepository(User);
     const { id } = req.params;
-<<<<<<< HEAD
-=======
-    const userRepository = getRepository(User);
->>>>>>> f2809b69da0fda4031f3d4dd4f12ac911906ab39
     const user = await userRepository.findOne(id);
     if (!user) {
       throw new HttpException(404, 'User not found!');
     }
-<<<<<<< HEAD
     const result = await userRepository.delete(id);
     if(!result){
       throw new HttpException(404, "User can't be deleted!")
     }
-=======
-    const result = await userRepository.findOne(id);
->>>>>>> f2809b69da0fda4031f3d4dd4f12ac911906ab39
     return res.status(200).json({ data: Boolean(result) });
   }
 }
