@@ -5,7 +5,7 @@ import reportWebVitals from './services/reportWebVitals';
 import { SocketProvider } from './services/socket';
 import { AuthProvider } from './services/auth';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './index.css';
+import './app.scss';
 
 ReactDOM.render(
   <React.Fragment>

@@ -9,9 +9,10 @@ import {
   Form,
 } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import logo from '../assets/logo.png';
-import client from '../services/api';
-import { AuthContext } from './../services/auth';
+import logo from 'assets/logo.png';
+import client from 'services/api';
+import { AuthContext } from 'services/auth';
+import './styles.scss';
 
 const AuthPage: React.FC = () => {
   const history = useHistory();
@@ -41,6 +42,7 @@ const AuthPage: React.FC = () => {
 
   const handlerPlay = async () => {
     const response = await client.post('/auth', { nickname, avatar });
+
     if (response.status === 201) {
       const { data, token } = response.data;
       setUser({ ...data, token });

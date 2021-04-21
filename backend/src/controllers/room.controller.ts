@@ -55,7 +55,6 @@ export class RoomController {
     if (!genre) {
       throw new HttpException(404, 'Genre not found!');
     }
-    console.log(genre);
     const room = roomRepository.create();
     room.genre = genre;
     room.owner = req.user as User;
@@ -78,25 +77,28 @@ export class RoomController {
     const genreRepository = getRepository(Genre);
     const musicRepository = getRepository(Music);
     const roomRepository = getRepository(Room);
-    const genre = await genreRepository.findOne(genreId);
-    if (!genre) {
-      throw new HttpException(404, 'Genre not found!');
-    }
     const room = await roomRepository.findOne(id);
     if (!room) {
       throw new HttpException(404, 'Room not found!');
     }
-    room.genre = genre;
+    if(genreId){
+      const genre = await genreRepository.findOne(genreId);
+      if (!genre) {
+        throw new HttpException(404, 'Genre not found!');
+      }
+      room.genre = genre;
+    }
+    
     room.owner = req.user as User;
+
     if (musicId) {
       const music = await musicRepository.findOne(id);
       if (!music) {
         throw new HttpException(404, 'Music not found!');
       }
       room.music = music;
-    } else {
-      room.music = null as any;
-    }
+    } 
+
     const data = await roomRepository.save(room);
     return res.status(200).json({ data });
   }
