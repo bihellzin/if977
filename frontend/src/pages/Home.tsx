@@ -34,8 +34,9 @@ const Home: React.FC = () => {
   const handleRoomClick = (code: string) => {
     setSelectedRoom(code);
   };
+
   return (
-    <>
+    <div className="d-flex flex-column pt-5">
       <Row className="pt-3">
         <Col xs={12}>
           <div
@@ -120,7 +121,7 @@ const Home: React.FC = () => {
               <Button
                 className="button-default"
                 variant="primary"
-                onClick={() => history.push('/room/test')}
+                onClick={() => history.push('/createroom')}
                 size="lg"
                 block
               >
@@ -141,7 +142,7 @@ const Home: React.FC = () => {
           </Row>
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 
