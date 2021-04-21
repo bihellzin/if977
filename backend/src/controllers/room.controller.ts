@@ -55,7 +55,6 @@ export class RoomController {
     if (!genre) {
       throw new HttpException(404, 'Genre not found!');
     }
-    console.log(genre);
     const room = roomRepository.create();
     room.genre = genre;
     room.owner = req.user as User;
