@@ -40,64 +40,65 @@ const AuthPage: React.FC = () => {
     );
   };
 
-  const handlerPlay = async () => {
-    const response = await client.post('/auth', { nickname, avatar });
-
-    if (response.status === 201) {
-      const { data, token } = response.data;
-      setUser({ ...data, token });
-      history.push('/lobby');
+  const handlerPlay: React.FormEventHandler<HTMLFormElement> = async e => {
+    e.preventDefault();
+    if (nickname.length >= 3 && nickname.length <= 8) {
+      const response = await client.post('/auth', { nickname, avatar });
+      if (response.status === 201) {
+        const { data, token } = response.data;
+        setUser({ ...data, token });
+        history.push('/lobby');
+      }
     }
   };
 
   return (
-    <>
-      <div className="d-flex flex-column pt-3">
-        <Col>
+    <div className="d-flex flex-column pt-3">
+      <Col>
+        <Row className="justify-content-center">
+          <Figure>
+            <Figure.Image alt="Avatar" src={logo} />
+          </Figure>
+        </Row>
+      </Col>
+      <Row className="justify-content-center">
+        <Col md={2}>
           <Row className="justify-content-center">
-            <Figure>
-              <Figure.Image alt="Avatar" src={logo} />
+            <Figure onClick={handlerAvatar}>
+              <Figure.Image
+                width={160}
+                height={160}
+                alt="Avatar"
+                src={avatar}
+              />
             </Figure>
           </Row>
-        </Col>
-        <Row className="justify-content-center">
-          <Col md={2}>
-            <Row className="justify-content-center">
-              <Figure onClick={handlerAvatar}>
-                <Figure.Image
-                  width={160}
-                  height={160}
-                  alt="Avatar"
-                  src={avatar}
+          <Form onSubmit={handlerPlay}>
+            <Form.Row>
+              <InputGroup className="search-box mb-3">
+                <FormControl
+                  className="input-control"
+                  placeholder="Nickname"
+                  value={nickname}
+                  onChange={handlerNickname}
+                  disabled={nickname.length < 3 && nickname.length > 8}
                 />
-              </Figure>
-            </Row>
-            <Form>
-              <Form.Row>
-                <InputGroup className="search-box mb-3">
-                  <FormControl
-                    className="input-control"
-                    placeholder="Nickname"
-                    value={nickname}
-                    onChange={handlerNickname}
-                  />
-                </InputGroup>
-              </Form.Row>
-              <Form.Row>
-                <Button
-                  className="button-default mt-1"
-                  variant="primary"
-                  onClick={handlerPlay}
-                  block
-                >
-                  JOGAR
-                </Button>
-              </Form.Row>
-            </Form>
-          </Col>
-        </Row>
-      </div>
-    </>
+              </InputGroup>
+            </Form.Row>
+            <Form.Row>
+              <Button
+                className="button-default mt-1"
+                variant="primary"
+                type="submit"
+                block
+              >
+                JOGAR
+              </Button>
+            </Form.Row>
+          </Form>
+        </Col>
+      </Row>
+    </div>
   );
 };
 
