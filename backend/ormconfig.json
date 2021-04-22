@@ -1,7 +1,7 @@
 {
   "type": "sqlite",
   "database": ":memory:",
-  "synchronize": false,
+  "synchronize": true,
   "logging": false,
   "dropSchema": true,
   "entities": ["src/models/*.model.ts"],

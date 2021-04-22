@@ -1,9 +1,4 @@
-import {
-  Connection,
-  ConnectionOptions,
-  createConnection,
-  getConnectionOptions,
-} from 'typeorm';
+import { Connection, createConnection } from 'typeorm';
 
 class Database {
   static connection: Connection;
@@ -17,20 +12,8 @@ class Database {
 
   static async createConnection() {
     if (Database.connection == null || !Database.connection.isConnected) {
-      const defaultOptions = await getConnectionOptions();
-
-      Database.connection = await createConnection(
-        Object.assign(defaultOptions, {
-          type: 'sqlite',
-          database: ':memory:',
-          synchronize: true,
-          dropSchema: process.env.NODE_ENV == 'test',
-          logging: process.env.NODE_ENV != 'test',
-          ...(process.env.NODE_ENV == 'production'
-            ? { type: 'postgres', url: process.env.DATABASE_URL }
-            : {}),
-        } as ConnectionOptions),
-      );
+      Database.connection = await createConnection();
+      Database.connection.runMigrations();
     }
     return Database.connection;
   }
