@@ -4,7 +4,7 @@
   "synchronize": true,
   "logging": false,
   "dropSchema": true,
-  "entities": ["src/models/*.model.ts"],
+  "entities": ["src/models/*.model.js"],
   "migrations": ["src/databases/migration/**/*.ts"],
   "subscribers": ["src/databases/subscriber/**/*.ts"],
   "cli": {
