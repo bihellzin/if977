@@ -4,9 +4,9 @@
   "synchronize": true,
   "logging": false,
   "dropSchema": true,
-  "entities": ["src/models/*.model.js"],
-  "migrations": ["src/databases/migration/**/*.ts"],
-  "subscribers": ["src/databases/subscriber/**/*.ts"],
+  "entities": ["./dist/models/*.model.js"],
+  "migrations": ["./dist/databases/migration/**/*.js"],
+  "subscribers": ["./dist/databases/subscriber/**/*.js"],
   "cli": {
     "migrationsDir": "./src/databases/migration",
     "entitiesDir": "./src/models",
