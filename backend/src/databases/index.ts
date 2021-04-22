@@ -30,7 +30,9 @@ class Database {
               entities: ['dist/models/*.model.js'],
               migrations: ['dist/databases/migration/*.js'],
               subscribers: ['dist/databases/subscriber/*.js'],
-              extra: { ssl: true },
+              ssl: {
+                ca: process.env.SSL_CERT,
+              },
             } as ConnectionOptions)
           : defaultOptions,
       );
