@@ -4,6 +4,7 @@ import {
   createConnection,
   getConnectionOptions,
 } from 'typeorm';
+import { join } from 'path';
 
 class Database {
   static connection: Connection;
@@ -27,9 +28,9 @@ class Database {
               synchronize: true,
               logging: false,
               dropSchema: true,
-              entities: ['./dist/models/*.model.js'],
-              migrations: ['./dist/databases/migration/**/*.js'],
-              subscribers: ['./dist/databases/subscriber/**/*.js'],
+              entities: [join(__dirname, '..', 'models/*.model.js')],
+              migrations: [join(__dirname, 'migration/**/*.js')],
+              subscribers: [join(__dirname, 'subscriber/**/*.js')],
             } as ConnectionOptions)
           : defaultOptions,
       );
