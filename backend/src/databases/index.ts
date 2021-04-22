@@ -1,4 +1,9 @@
-import { Connection, createConnection } from 'typeorm';
+import {
+  Connection,
+  ConnectionOptions,
+  createConnection,
+  getConnectionOptions,
+} from 'typeorm';
 
 class Database {
   static connection: Connection;
@@ -12,7 +17,8 @@ class Database {
 
   static async createConnection() {
     if (Database.connection == null || !Database.connection.isConnected) {
-      Database.connection = await createConnection();
+      const defaultOptions = await getConnectionOptions();
+      Database.connection = await createConnection(defaultOptions);
       Database.connection.runMigrations();
     }
     return Database.connection;
