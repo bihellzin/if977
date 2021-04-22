@@ -31,7 +31,7 @@ class Database {
               migrations: ['dist/databases/migration/*.js'],
               subscribers: ['dist/databases/subscriber/*.js'],
               ssl: {
-                ca: process.env.SSL_CERT,
+                rejectUnauthorized: false,
               },
             } as ConnectionOptions)
           : defaultOptions,
