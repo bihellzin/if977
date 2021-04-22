@@ -30,7 +30,7 @@ class Database {
               entities: ['dist/models/*.model.js'],
               migrations: ['dist/databases/migration/*.js'],
               subscribers: ['dist/databases/subscriber/*.js'],
-              ssl: true,
+              extra: { ssl: true },
             } as ConnectionOptions)
           : defaultOptions,
       );
