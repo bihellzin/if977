@@ -13,7 +13,7 @@ export class MusicController {
     this.router.get(this.path, JwtAuth, asyncHandler(this.findAll));
     this.router.get(`${this.path}/:id`, JwtAuth, asyncHandler(this.findOne));
     this.router.post(this.path, JwtAuth, asyncHandler(this.create));
-    this.router.put(`${this.path}/:id`, JwtAuth, asyncHandler(this.update));
+    this.router.patch(`${this.path}/:id`, JwtAuth, asyncHandler(this.update));
     this.router.delete(`${this.path}/:id`, JwtAuth, asyncHandler(this.delete));
   }
 

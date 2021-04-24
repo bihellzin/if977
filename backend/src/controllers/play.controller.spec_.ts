@@ -9,11 +9,8 @@ import { RoomController } from './room.controller';
 import { AuthController } from './auth.controller';
 import { GenreController } from './genre.controller';
 import { MusicController } from './music.controller';
-import { PlayController, calcAccuracy } from './play.controller';
+import { PlayController} from './play.controller';
 import { Podium } from './../models/podium.model';
-
-
- 
 
 let connection: typeorm.Connection;
 let app: express.Application;
@@ -40,9 +37,6 @@ describe('User Suite', () => {
     podium.score = 0;
 
     podiumRepository.save(podium);
-
-
-
 
   });
 
@@ -213,7 +207,5 @@ describe('User Suite', () => {
     
     
     //   })
-
-
 
 });

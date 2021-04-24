@@ -52,9 +52,6 @@ describe('User Suite', () => {
     expect(resRoom.body).toBeTruthy();
 
 
-
-
-
   });
 
   it('Create with genre', async () => {
@@ -95,9 +92,6 @@ describe('User Suite', () => {
     .set('Authorization', `Bearer ${token}`);
     expect(resFind.status).toEqual(200);
     expect(resFind.body).toBeTruthy();
-
-
-
   })
 
   it('Update', async() => {
@@ -156,8 +150,6 @@ describe('User Suite', () => {
 
 
    })
-
-
 
 //    it('Find All', async() => {
 
