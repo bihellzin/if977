@@ -46,34 +46,34 @@ describe('User Suite', () => {
 
   });
 
-  it('Create play', async () => {
+  // it('Create play', async () => {
 
 
-    const resGenre = await req.post('/genre').send({ name: "Rap" })
-    .set('Authorization', `Bearer ${token}`);
-    expect(resGenre.status).toEqual(201);
-    expect(resGenre.body).toBeTruthy();
+  //   const resGenre = await req.post('/genre').send({ name: "Rap" })
+  //   .set('Authorization', `Bearer ${token}`);
+  //   expect(resGenre.status).toEqual(201);
+  //   expect(resGenre.body).toBeTruthy();
 
-    const resMusic = await req.post('/music').send({ name: "Demorô", author: "Criolo", url: "criolo-demoro.mp3", genreId: resGenre.body.data.id })
-    .set('Authorization', `Bearer ${token}`);
-    expect(resMusic.status).toEqual(201);
-    expect(resMusic.body).toBeTruthy();
+  //   const resMusic = await req.post('/music').send({ name: "Demorô", author: "Criolo", url: "criolo-demoro.mp3", genreId: resGenre.body.data.id })
+  //   .set('Authorization', `Bearer ${token}`);
+  //   expect(resMusic.status).toEqual(201);
+  //   expect(resMusic.body).toBeTruthy();
 
-    const resRoom = await req.post('/room').send({ genreId:resGenre.body.data.id , musicId: resMusic.body.data.id })
-    .set('Authorization', `Bearer ${token}`);
-    expect(resRoom.status).toEqual(201);
-    expect(resRoom.body).toBeTruthy();
+  //   const resRoom = await req.post('/room').send({ genreId:resGenre.body.data.id , musicId: resMusic.body.data.id })
+  //   .set('Authorization', `Bearer ${token}`);
+  //   expect(resRoom.status).toEqual(201);
+  //   expect(resRoom.body).toBeTruthy();
 
-    const accuracy = calcAccuracy('Ximbalaie quando vejo o sol beijando o mar', "Demorô" );
-    //console.log(accuracy);
-    const resPlay = await req.post('/play').send({ answer: "Ximbalaie quando vejo o sol beijando o mar", genreId:resGenre.body.data.id, musicId: resMusic.body.data.id })
-    .set('Authorization', `Bearer ${token}`);
-    expect(resPlay.body).not.toBeTruthy();
-    expect(resPlay.status).toEqual(201);
+  //   const accuracy = calcAccuracy('Ximbalaie quando vejo o sol beijando o mar', "Demorô" );
+  //   //console.log(accuracy);
+  //   const resPlay = await req.post('/play').send({ answer: "Ximbalaie quando vejo o sol beijando o mar", genreId:resGenre.body.data.id, musicId: resMusic.body.data.id })
+  //   .set('Authorization', `Bearer ${token}`);
+  //   expect(resPlay.body).not.toBeTruthy();
+  //   expect(resPlay.status).toEqual(201);
 
 
 
-  });
+  // });
 
 //   it('Create with genre', async () => {
 
