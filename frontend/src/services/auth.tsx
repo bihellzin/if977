@@ -10,6 +10,7 @@ interface User {
   name: string;
   email: string;
   userType: UserTypes;
+  token: string;
 }
 
 const DEFAULT_USER = {
@@ -17,6 +18,7 @@ const DEFAULT_USER = {
   name: '',
   email: '',
   userType: UserTypes.Guest,
+  token: '',
 };
 
 export const AuthContext = React.createContext<

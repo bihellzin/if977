@@ -1,0 +1,39 @@
+.group-custom {
+  position: relative;
+  flex: 1;
+  background: #ffffff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0px 4px 0px #18191f;
+  border-radius: 16px;
+  justify-content: center;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.control-custom {
+  position: relative;
+  flex: 1;
+  height: calc(1.5em + 0.75rem + 2px);
+  width: 100%;
+  border: 0;
+  text-align: center;
+}
+
+.button-custom {
+  background: #080d8e;
+  border-radius: 50px;
+}
+
+.button-custom:hover {
+  color: #fff;
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+
+pointer-hover:hover {
+  cursor: pointer;
+}

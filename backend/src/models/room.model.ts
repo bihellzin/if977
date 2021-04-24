@@ -1,10 +1,13 @@
 import { validateOrReject } from 'class-validator';
 import {
+  AfterLoad,
   BaseEntity,
   BeforeInsert,
   BeforeUpdate,
   CreateDateColumn,
   Entity,
+  getConnection,
+  getRepository,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -48,5 +51,15 @@ export class Room extends BaseEntity {
   @BeforeUpdate()
   async validate() {
     await validateOrReject(this, { skipUndefinedProperties: true });
+  }
+
+  protected playerCount: number;
+
+  @AfterLoad()
+  async getPlayerCount() {
+    const userReposity = getRepository(User);
+    this.playerCount = await userReposity.count({
+      where: { room: { id: this.id } },
+    });
   }
 }

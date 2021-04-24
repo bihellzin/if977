@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { getRepository } from 'typeorm';
+import { getRepository, getManager } from 'typeorm';
 import levenshtein from 'js-levenshtein';
 import HttpException, { asyncHandler } from '../middlewares/errorHandler';
 import { JwtAuth } from '../middlewares/passport';
@@ -8,6 +8,7 @@ import { Room } from '../models/room.model';
 import { Music } from './../models/music.model';
 import { Podium } from './../models/podium.model';
 import { User } from '../models/user.model';
+import { Socket } from 'socket.io';
 
 export class PlayController {
   public router = Router();
@@ -17,99 +18,110 @@ export class PlayController {
     this.router.get(this.path, JwtAuth, asyncHandler(this.findAll));
     this.router.get(`${this.path}/:id`, JwtAuth, asyncHandler(this.findOne));
     this.router.post(this.path, JwtAuth, asyncHandler(this.create));
-    this.router.put(`${this.path}/:id`, JwtAuth, asyncHandler(this.update));
+    this.router.patch(`${this.path}/:id`, JwtAuth, asyncHandler(this.update));
     this.router.delete(`${this.path}/:id`, JwtAuth, asyncHandler(this.delete));
   }
 
   async findAll(req: Request, res: Response) {
+    const roomId = parseInt((req.query.roomId as string) || '0');
     const offset = parseInt((req.query.offset as string) || '0');
-    const limit = Math.max(parseInt((req.query.limit as string) || '5'), 25);
-    const roomRepository = getRepository(Room);
-    const [data, total] = await roomRepository.findAndCount({
+    const limit = Math.min(parseInt((req.query.limit as string) || '5'), 25);
+
+    const playRepository = getRepository(Play);
+    const [data, total] = await playRepository.findAndCount({
+      where: { room: { id: roomId } },
+      relations: ['user'],
+      order: { createdAt: 'DESC' },
       skip: offset,
       take: limit,
     });
-    return res.status(200).json({ total, offset, limit, data });
+
+    return res.status(200).json({ total, offset, limit, data: data.reverse() });
   }
 
   async findOne(req: Request, res: Response) {
+    const { id } = req.params;
+
     const playRepository = getRepository(Play);
-    const play = await playRepository.findOne(req.params.id);
-    if (!play) {
-      throw new HttpException(404, 'Play not found!');
-    }
+    const play = await playRepository.findOneOrFail(id);
+
     return res.status(200).json({ data: play });
   }
 
   async create(req: Request, res: Response) {
-    const { answer = '', roomId, musicId } = req.body;
+    const { answer, roomId, musicId } = req.body;
+    const user = req.user as User;
+
     const playRepository = getRepository(Play);
     const roomRepository = getRepository(Room);
     const musicRepository = getRepository(Music);
-    const podiumRepository = getRepository(Podium);
+    const manager = getManager();
+
     const play = playRepository.create();
-    const room = await roomRepository.findOne(roomId);
-    if (!room) {
-      throw new HttpException(404, 'Room not found!');
-    }
-    play.room = room;
-    const music = await musicRepository.findOne(musicId);
-    if (!music) {
-      throw new HttpException(404, 'Music not found!');
-    }
-    play.user = req.user as User;
-    play.music = music;
-    play.accuracy = this.calcAccuracy(answer, music.name);
+    play.user = user;
+    play.room = await roomRepository.findOneOrFail(roomId);
+    play.music = await musicRepository.findOneOrFail(musicId);
+    play.accuracy = this.calcAccuracy(answer, play.music.name);
+
     // Set podium
     if ((play.accuracy = 100.0)) {
-      const { maxPodium } = await podiumRepository.query(
-        'SELECT MAX(R.id) AS maxPodium FROM podium R',
-      );
-      const { currentPodium } = await playRepository.query(
-        `
-          SELECT COALESCE(MAX(P.podium_id), 0) + 1 AS currentPodium
-          FROM play P
-              JOIN room R ON R.id = P.room_id
-          WHERE P.musicId = $1
-              AND P.roomId = $2
-              AND P.createdAt > R.startedAt
-          `,
-        [music.id, room.id],
-      );
-      const podium = await podiumRepository.findOne(
+      const { maxPodium } = await manager
+        .createQueryBuilder(Podium, 'podium')
+        .select(['MAX(podium.id) AS maxPodium'])
+        .getRawOne();
+      const { currentPodium } = await manager
+        .createQueryBuilder(Play, 'play')
+        .leftJoin(Room, 'room')
+        .where('podium.musicId = :musicId', { musicId })
+        .andWhere('podium.roomId = :roomId', { roomId })
+        .andWhere('podium.createdAt > room.startedAt')
+        .select(['COALESCE(MAX(P.podium_id), 0) + 1 AS currentPodium'])
+        .getRawOne();
+
+      // const { currentPodium } = await playRepository.query(
+      //   `
+      //     SELECT COALESCE(MAX(P.podium_id), 0) + 1 AS currentPodium
+      //     FROM play P
+      //         JOIN room R ON R.id = P.room_id
+      //     WHERE P.musicId = $1
+      //         AND P.roomId = $2
+      //         AND P.createdAt > R.startedAt
+      //     `,
+      //   [play.music.id, play.room.id],
+      // );
+      play.podium = await manager.findOneOrFail(
+        Podium,
         Math.min(maxPodium, currentPodium),
       );
-      if (!podium) {
-        throw new HttpException(404, 'Podium not found!');
-      }
-      play.podium = podium;
     }
     const data = await playRepository.save(play);
+
+    const socket = req.app.get('socket') as Socket;
+    socket.to(`${data.room.id}`).emit('plays');
+
     return res.status(201).json({ data });
   }
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
     const { answer, roomId, musicId } = req.body;
+    const user = req.user as User;
+
     const playRepository = getRepository(Play);
     const roomRepository = getRepository(Room);
     const musicRepository = getRepository(Music);
     const podiumRepository = getRepository(Podium);
-    const play = await playRepository.findOne(id);
-    if (!play) {
-      throw new HttpException(404, 'Play not found!');
+
+    const play = await playRepository.findOneOrFail(id);
+    play.user = user;
+    if (musicId) {
+      play.music = await musicRepository.findOneOrFail(musicId);
     }
-    const room = await roomRepository.findOne(roomId);
-    if (!room) {
-      throw new HttpException(404, 'Room not found!');
+    if (roomId) {
+      play.room = await roomRepository.findOneOrFail(roomId);
     }
-    const music = await musicRepository.findOne(musicId);
-    if (!music) {
-      throw new HttpException(404, 'Music not found!');
-    }
-    play.user = req.user as User;
-    play.music = music;
-    play.accuracy = this.calcAccuracy(answer, music.name);
+    play.accuracy = this.calcAccuracy(answer, play.music.name);
+
     // Set podium
     if ((play.accuracy = 100.0)) {
       const { maxPodium } = await podiumRepository.query(
@@ -124,15 +136,11 @@ export class PlayController {
               AND P.roomId = $2
               AND P.createdAt > R.startedAt
           `,
-        [music.id, room.id],
+        [play.music.id, play.room.id],
       );
-      const podium = await podiumRepository.findOne(
+      play.podium = await podiumRepository.findOneOrFail(
         Math.min(maxPodium, currentPodium),
       );
-      if (!podium) {
-        throw new HttpException(404, 'Podium not found!');
-      }
-      play.podium = podium;
     }
     const data = await playRepository.save(play);
     // Reset podium
@@ -166,18 +174,24 @@ export class PlayController {
         [play.createdAt, play.room.id],
       );
     }
+
+    const socket = req.app.get('socket') as Socket;
+    socket.to(`${data.room.id}`).emit('plays');
+
     return res.status(200).json({ data });
   }
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;
+
     const playRepository = getRepository(Play);
-    const play = await playRepository.findOne(id);
-    if (!play) {
-      throw new HttpException(404, 'Play not found!');
-    }
-    const result = await playRepository.findOne(id);
-    return res.status(200).json({ data: Boolean(result) });
+    const play = await playRepository.findOneOrFail(id);
+    await playRepository.remove(play);
+
+    const socket = req.app.get('socket') as Socket;
+    socket.to(`${play.room.id}`).emit('plays');
+
+    return res.status(200).json({ data: true });
   }
 
   calcAccuracy(a: string, b: string) {
