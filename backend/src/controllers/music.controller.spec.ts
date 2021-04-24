@@ -4,13 +4,9 @@ import faker from 'faker';
 import express from 'express';
 import App from '../app';
 import Database from '../databases';
-import { getRepository } from 'typeorm';
-import { RoomController } from './room.controller';
 import { AuthController } from './auth.controller';
 import { GenreController } from './genre.controller';
 import { MusicController } from './music.controller';
-import { PlayController, calcAccuracy } from './play.controller';
-import { Podium } from './../models/podium.model';
 
 
  
@@ -24,7 +20,7 @@ let podium: any;
 describe('User Suite', () => {
   beforeAll(async () => {
     connection = await Database.createConnection();
-    app = new App([new RoomController(), new AuthController(), new GenreController(), new MusicController(), new PlayController()]).app;
+    app = new App([new AuthController(), new GenreController(), new MusicController()]).app;
 
     req = supertest(app);
 
@@ -35,60 +31,51 @@ describe('User Suite', () => {
 
     token = resultAuth.body.token;
 
-    podiumRepository = getRepository(Podium);
-    podium = new Podium();
-    podium.score = 0;
 
-    podiumRepository.save(podium);
 
 
 
 
   });
 
-  // it('Create play', async () => {
+  it('Create music', async () => {
 
+    
+    const resGenre = await req.post('/genre').send({ name: "Rap" })
+    .set('Authorization', `Bearer ${token}`);
+    expect(resGenre.status).toEqual(201);
+    expect(resGenre.body).toBeTruthy();
 
-  //   const resGenre = await req.post('/genre').send({ name: "Rap" })
-  //   .set('Authorization', `Bearer ${token}`);
-  //   expect(resGenre.status).toEqual(201);
-  //   expect(resGenre.body).toBeTruthy();
+    const resMusic = await req.post('/music').send({ name: "Demorô", author: "Criolo", url: "criolo-demoro.mp3", genreId: resGenre.body.data.id })
+    .set('Authorization', `Bearer ${token}`);
+    expect(resMusic.status).toEqual(201);
+    expect(resMusic.body).toBeTruthy();
 
-  //   const resMusic = await req.post('/music').send({ name: "Demorô", author: "Criolo", url: "criolo-demoro.mp3", genreId: resGenre.body.data.id })
-  //   .set('Authorization', `Bearer ${token}`);
-  //   expect(resMusic.status).toEqual(201);
-  //   expect(resMusic.body).toBeTruthy();
+  });
 
-  //   const resRoom = await req.post('/room').send({ genreId:resGenre.body.data.id , musicId: resMusic.body.data.id })
-  //   .set('Authorization', `Bearer ${token}`);
-  //   expect(resRoom.status).toEqual(201);
-  //   expect(resRoom.body).toBeTruthy();
+  it('Update music', async () => {
 
-  //   const accuracy = calcAccuracy('Ximbalaie quando vejo o sol beijando o mar', "Demorô" );
-  //   //console.log(accuracy);
-  //   const resPlay = await req.post('/play').send({ answer: "Ximbalaie quando vejo o sol beijando o mar", genreId:resGenre.body.data.id, musicId: resMusic.body.data.id })
-  //   .set('Authorization', `Bearer ${token}`);
-  //   expect(resPlay.body).not.toBeTruthy();
-  //   expect(resPlay.status).toEqual(201);
+    const resGenre = await req.post('/genre').send({ name: "Rosque" })
+    .set('Authorization', `Bearer ${token}`);
+    expect(resGenre.status).toEqual(201);
+    expect(resGenre.body).toBeTruthy();
 
+    const resMusic = await req.post('/music').send({ name: "Misery Business", author: "Paramore", url: "paramore-misery-business.mp3", genreId: resGenre.body.data.id })
+    .set('Authorization', `Bearer ${token}`);
+    expect(resMusic.status).toEqual(201);
+    expect(resMusic.body).toBeTruthy();
 
+    const resGenre2 = await req.post('/genre').send({ name: "Punk" })
+    .set('Authorization', `Bearer ${token}`);
+    expect(resGenre.status).toEqual(201);
+    expect(resGenre.body).toBeTruthy();
 
-  // });
-
-//   it('Create with genre', async () => {
-
-//     const resAuth = await req.post('/genre').send({ name: "Brega" })
-//     .set('Authorization', `Bearer ${token}`);
-//     expect(resAuth.status).toEqual(201);
-//     expect(resAuth.body).toBeTruthy();
-
-//     const resRoom = await req.post('/room').send({ genreId:resAuth.body.data.id })
-//     .set('Authorization', `Bearer ${token}`);
-
-//     expect(resRoom.status).toEqual(201);
-//     expect(resRoom.body).toBeTruthy();
-
-//   });
+    const resMusicUpdate = await req.patch(`/music/${resMusic.body.data.id}`).send({ genreId:resGenre2.body.data.id })
+    .set('Authorization', `Bearer ${token}`);
+    expect(resMusicUpdate.status).toEqual(200);
+    expect(resMusicUpdate.body).toBeTruthy();
+    expect(resMusicUpdate.body.data).not.toBeNull();
+  });
 
 
 //   it('Find One', async() => {
@@ -132,7 +119,6 @@ describe('User Suite', () => {
 
 //     const resMusic = await req.post('/music').send({ name: "Misery Business", author: "Paramore", url: "paramore-misery-business.mp3", genreId: resGenre.body.data.id })
 //     .set('Authorization', `Bearer ${token}`);
-
 //     expect(resMusic.status).toEqual(201);
 //     expect(resMusic.body).toBeTruthy();
 
