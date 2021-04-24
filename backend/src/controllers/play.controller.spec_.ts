@@ -12,9 +12,6 @@ import { MusicController } from './music.controller';
 import { PlayController} from './play.controller';
 import { Podium } from './../models/podium.model';
 
-
- 
-
 let connection: typeorm.Connection;
 let app: express.Application;
 let req: supertest.SuperTest<supertest.Test>;
@@ -40,9 +37,6 @@ describe('User Suite', () => {
     podium.score = 0;
 
     podiumRepository.save(podium);
-
-
-
 
   });
 
@@ -213,7 +207,5 @@ describe('User Suite', () => {
     
     
     //   })
-
-
 
 });
