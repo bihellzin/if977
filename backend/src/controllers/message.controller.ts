@@ -63,4 +63,42 @@ export class MessageController {
 
     return res.status(201).json({ data });
   }
+<<<<<<< HEAD
+=======
+
+  // async update(req: Request, res: Response) {
+  //   const { id } = req.params;
+  //   const { content, roomId } = req.body;
+  //   const user = req.user as User;
+
+  //   const roomRepository = getRepository(Room);
+  //   const messageRepository = getRepository(Message);
+
+  //   const message = await messageRepository.findOneOrFail(id);
+  //   message.content = content || message.content;
+  //   message.user = user;
+  //   if (roomId) {
+  //     message.room = await roomRepository.findOneOrFail(roomId);
+  //   }
+  //   const data = await messageRepository.save(message);
+
+  //   const socket = req.app.get('socket') as Socket;
+  //   if (socket) socket.to(`${message.room.id}`).emit('messages');
+
+  //   return res.status(200).json({ data });
+  // }
+
+  // async delete(req: Request, res: Response) {
+  //   const { id } = req.params;
+
+  //   const messageRepository = getRepository(Message);
+  //   const message = await messageRepository.findOneOrFail(id);
+  //   await messageRepository.remove(message);
+
+  //   const socket = req.app.get('socket') as Socket;
+  //   if (socket) socket.to(`${message.room.id}`).emit('messages');
+
+  //   return res.status(200).json({ data: true });
+  // }
+>>>>>>> 6ab6d3dce8fd57e9ae0b65ad7a8bbcd1ff722435
 }
