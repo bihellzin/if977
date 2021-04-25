@@ -73,7 +73,7 @@ A rodada termina quando o jogador com maior pontuação atingir 120 pontos. Quan
 
 
 ## Links Importantes
-- [Frontend](http://frontend-30.herokuapp.com/)
-- [Backend](http://backend-30.herokuapp.com/)
+- [Frontend](https://thirtysecongs.herokuapp.com/)
+- [Backend](https://thirtysecongs-api.herokuapp.com/)
 - [Documentação](https://github.com/bihellzin/if977/wiki)
 - [Kanban](https://trello.com/invite/b/ZcWGLFUx/45d995613fa71e0e42270c132d9953e2/30-secongs)
