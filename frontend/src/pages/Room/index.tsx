@@ -144,7 +144,7 @@ const RoomPage: React.FC = () => {
         </Col>
       </Row>
       <Row>
-        <Col xs={12} sm={3} className="pt-3 overflow-auto" style={{ maxHeight: "55vh" }}>
+        <Col xs={12} sm={3} className="pt-3 overflow-auto" style={{ maxHeight: "54.9vh" }}>
           {players.map(player => (
             <div key={player.id} className="card-room mt-3 mb-3">
               <Row className="p-3">
