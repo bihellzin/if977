@@ -77,7 +77,7 @@ export class User extends BaseEntity {
         .getRawOne();
       const { score } = await manager
         .createQueryBuilder()
-        .select('COALESCE(ROUND(SUM(podium.score)), 0)', 'score')
+        .select('COALESCE(ROUND(SUM(podium.score) % 120), 0)', 'score')
         .from(Play, 'play')
         .innerJoin(Podium, 'podium')
         .innerJoin(Room, 'room')
