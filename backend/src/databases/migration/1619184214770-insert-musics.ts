@@ -21,7 +21,7 @@ export class insertMusics1619184214770 implements MigrationInterface {
           url: 'brasileiras/alceu_valenca-la_belle_de_jour.m4a',
         },
         {
-          name: 'morena_tropicana',
+          name: 'Morena Tropicana',
           author: 'Alceu Valença',
           genre: { id: 3, name: 'Brasileiras' },
           url: 'brasileiras/alceu_valenca-morena_tropicana.m4a',

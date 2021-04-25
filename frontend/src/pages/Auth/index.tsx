@@ -16,7 +16,9 @@ const AuthPage: React.FC = () => {
     '/avatars/avatar-5.png',
     '/avatars/avatar-6.png',
   ];
-  const [avatar, setAvatar] = React.useState('/avatars/avatar-1.png');
+  const [avatar, setAvatar] = React.useState(
+    avatars[Math.floor(Math.random() * avatars.length)],
+  );
   const [nickname, setNickname] = React.useState('');
   const [, setUser] = React.useContext(AuthContext);
 
@@ -32,14 +34,23 @@ const AuthPage: React.FC = () => {
     );
   };
 
+  React.useEffect(() => {
+    if (history.location.pathname === '/') {
+      sessionStorage.removeItem('token');
+    }
+  }, [history]);
+
   const handlerPlay: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
     if (nickname.length >= 3 && nickname.length <= 8) {
       const response = await client.post('/auth', { nickname, avatar });
       if (response.status === 201) {
         const { data, token } = response.data;
-        setUser({ ...data, token });
-        history.push('/lobby');
+        sessionStorage.setItem('token', token);
+        setUser(data);
+        if (history.location.pathname === '/') {
+          history.push('/lobby');
+        }
       }
     }
   };

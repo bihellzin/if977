@@ -4,28 +4,31 @@ import { CardColumns, Col, Row, Button, Card } from 'react-bootstrap';
 import { GrClose } from 'react-icons/all';
 import client, { Genre } from 'services/api';
 import './styles.scss';
-import { AuthContext } from './../../services/auth';
 
 const Home: React.FC = () => {
   const history = useHistory();
-  const [user] = React.useContext(AuthContext);
   const [selectedGenre, setSelectedGenre] = React.useState<number>(0);
   const [genres, setGenres] = React.useState<Genre[]>([]);
 
   React.useEffect(() => {
+    let mounted = true;
+
     const fetchData = async () => {
-      const { status, data } = await client.get('/genre', {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      if (status === 200 && data.data) {
-        setGenres(data.data);
-      } else {
-        setGenres([]);
+      const { status, data } = await client.get('/genre');
+      if (mounted) {
+        if (status === 200 && data.data) {
+          setGenres(data.data);
+        } else {
+          setGenres([]);
+        }
       }
     };
 
     fetchData();
-  }, [user.token]);
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleGenreClick = (id: number) => {
     setSelectedGenre(id);
@@ -33,13 +36,9 @@ const Home: React.FC = () => {
 
   const handleNewRoomClick = async () => {
     if (genres.some(g => g.id === selectedGenre)) {
-      const { status, data } = await client.post(
-        '/room',
-        { genreId: selectedGenre },
-        {
-          headers: { Authorization: `Bearer ${user.token}` },
-        },
-      );
+      const { status, data } = await client.post('/room', {
+        genreId: selectedGenre,
+      });
       if (status === 201 && data.data) {
         history.push(`/room/${data.data.id}`);
       }

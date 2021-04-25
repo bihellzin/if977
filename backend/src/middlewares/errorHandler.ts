@@ -1,5 +1,6 @@
 import { ValidationError } from 'class-validator';
 import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
+import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
 
 export default class HttpException extends Error {
   status: number;
@@ -23,7 +24,6 @@ export const errorHandler: ErrorRequestHandler = (
     err[0] instanceof ValidationError
   ) {
     res.status(400).json({
-      status: 400,
       error: Object.fromEntries(
         err.map(e => [
           e.property,
@@ -33,9 +33,12 @@ export const errorHandler: ErrorRequestHandler = (
         ]),
       ),
     });
+  } else if (err instanceof EntityNotFoundError) {
+    res.status(404).json({
+      error: err.message,
+    });
   } else {
     res.status(err.status || 500).json({
-      status: err.status || 500,
       error: err.message || 'Something went wrong',
     });
   }

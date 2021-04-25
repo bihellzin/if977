@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { getManager, getRepository, ILike } from 'typeorm';
-import HttpException, { asyncHandler } from '../middlewares/errorHandler';
+import { getRepository } from 'typeorm';
+import { asyncHandler } from '../middlewares/errorHandler';
 import { JwtAuth } from '../middlewares/passport';
 import { Genre } from '../models/genre.model';
 import { Music } from '../models/music.model';

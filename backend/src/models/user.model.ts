@@ -5,6 +5,7 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  getManager,
   getRepository,
   LessThanOrEqual,
   ManyToOne,
@@ -16,6 +17,7 @@ import { Room } from './room.model';
 import { Length, validateOrReject } from 'class-validator';
 import { Message } from './message.model';
 import { Play } from './play.model';
+import { Podium } from './podium.model';
 
 @Entity()
 export class User extends BaseEntity {
@@ -31,6 +33,7 @@ export class User extends BaseEntity {
 
   // Relations
   @ManyToOne(() => Room, room => room.players, {
+    eager: true,
     nullable: true,
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL',
@@ -58,25 +61,35 @@ export class User extends BaseEntity {
   @AfterLoad()
   async getPlayerScoreAndWins() {
     if (this.room) {
-      const playRepository = getRepository(Play);
-      this.score =
-        (await playRepository.count({
-          where: {
-            user: { id: this.id },
-            room: { id: this.room.id },
-            createdAt: MoreThan(this.room.startedAt),
-            accuracy: 100.0,
-          },
-        })) / 120;
-      this.wins =
-        (await playRepository.count({
-          where: {
-            user: { id: this.id },
-            room: { id: this.room.id },
-            createdAt: LessThanOrEqual(this.room.startedAt),
-            accuracy: 100.0,
-          },
-        })) % 120;
+      const manager = getManager();
+      const { wins } = await manager
+        .createQueryBuilder()
+        .select('COALESCE(ROUND(SUM(podium.score) / 120), 0)', 'wins')
+        .from(Play, 'play')
+        .innerJoin(Podium, 'podium')
+        .innerJoin(Room, 'room')
+        .where('play.userId = :playerId', { playerId: this.id })
+        .andWhere('play.roomId = :roomId', { roomId: this.room.id })
+        .andWhere('play.createdAt <= :startedAt', {
+          startedAt: this.room.startedAt,
+        })
+        .andWhere('play.accuracy = 100')
+        .getRawOne();
+      const { score } = await manager
+        .createQueryBuilder()
+        .select('COALESCE(ROUND(SUM(podium.score)), 0)', 'score')
+        .from(Play, 'play')
+        .innerJoin(Podium, 'podium')
+        .innerJoin(Room, 'room')
+        .where('play.userId = :playerId', { playerId: this.id })
+        .andWhere('play.roomId = :roomId', { roomId: this.room.id })
+        .andWhere('play.createdAt > :startedAt', {
+          startedAt: this.room.startedAt,
+        })
+        .andWhere('play.accuracy = 100')
+        .getRawOne();
+      this.score = score;
+      this.wins = wins;
     } else {
       this.score = 0;
       this.wins = 0;

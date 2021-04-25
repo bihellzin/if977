@@ -6,6 +6,7 @@ import { GrClose, AiOutlineSend } from 'react-icons/all';
 import { AuthContext } from 'services/auth';
 import socket from 'services/socket';
 import client, { DEFAULT_ROOM, Room, User, Message, Play } from 'services/api';
+import { SoundContext } from 'services/sound';
 import './styles.scss';
 
 const RoomPage: React.FC = () => {
@@ -18,117 +19,111 @@ const RoomPage: React.FC = () => {
   const [currentMsg, setCurrentMsg] = React.useState('');
   const [currentAnswer, setCurrentAnswer] = React.useState('');
   const [players, setPlayers] = React.useState<User[]>([]);
+  const [music, setMusic] = React.useContext(SoundContext);
 
   React.useEffect(() => {
     const joinRoom = async () => {
-      await client.patch(
-        `/user/${user.id}`,
-        { roomId: roomCode },
-        {
-          headers: { Authorization: `Bearer ${user.token}` },
-        },
-      );
+      await client.patch(`/user/${user.id}`, { roomId: roomCode });
       socket.emit('join-room', roomCode);
     };
     joinRoom();
     return () => {
       const leaveRoom = async () => {
-        await client.patch(
-          `/user/${user.id}`,
-          { roomId: null },
-          {
-            headers: { Authorization: `Bearer ${user.token}` },
-          },
-        );
+        await client.patch(`/user/${user.id}`, { roomId: null });
       };
       leaveRoom();
       socket.emit('leave-room', roomCode);
     };
-  }, [roomCode, user.id, user.token]);
+  }, [roomCode, user.id]);
 
   React.useEffect(() => {
-    socket.on('join-room', async (data: string) => {
-      if (data) {
-        let response = await client.get(`/room/${roomCode}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        if (response.status === 200) {
-          const { data } = response.data;
-          setRoom(data);
-        }
+    let mounted = true;
 
-        response = await client.get(`/user?roomId=${roomCode}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        if (response.status === 200) {
-          const { data } = response.data;
-          setPlayers(data);
+    socket.on('join-room', async () => {
+      const resRoom = await client.get(`/room/${roomCode}`);
+      if (mounted && resRoom.status === 200) {
+        const { data } = resRoom.data;
+        setRoom(data);
+        music.pause();
+        if (data.music) {
+          const url = `${window.location.origin}/musics/${data.music.url}`;
+          const song = new Audio(url);
+          song.play();
+          setMusic(song);
+        } else {
+          music.pause();
         }
       }
+      const resUsers = await client.get(`/user?roomId=${roomCode}`);
+      if (mounted && resUsers.status === 200) {
+        const { data } = resUsers.data;
+        setPlayers(data);
+      }
     });
-  }, [roomCode, user.token]);
 
-  const fetchMessages = React.useCallback(async () => {
-    const response = await client.get(`/message?roomId=${roomCode}&limit=25`, {
-      headers: { Authorization: `Bearer ${user.token}` },
-    });
-    if (response.status === 200) {
-      const { data } = response.data;
-      setMessages(data);
-    }
-  }, [roomCode, user.token]);
+    return () => {
+      mounted = false;
+    };
+  }, [music, roomCode, setMusic]);
 
   React.useEffect(() => {
+    let mounted = true;
+
+    const fetchMessages = async () => {
+      const response = await client.get(`/message?roomId=${roomCode}&limit=25`);
+      if (mounted && response.status === 200) {
+        const { data } = response.data;
+        setMessages(data);
+      }
+    };
+
     socket.on('messages', fetchMessages);
-  }, [fetchMessages]);
+
+    return () => {
+      mounted = false;
+    };
+  }, [roomCode]);
 
   const sendMessage: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
-    if (user.token && currentMsg) {
-      const response = await client.post(
-        `/message`,
-        {
-          content: currentMsg,
-          roomId: roomCode,
-        },
-        {
-          headers: { Authorization: `Bearer ${user.token}` },
-        },
-      );
+    if (currentMsg) {
+      const response = await client.post(`/message`, {
+        content: currentMsg,
+        roomId: roomCode,
+      });
       if (response.status === 201) {
         setCurrentMsg('');
       }
     }
   };
 
-  const fetchPlays = React.useCallback(async () => {
-    const response = await client.get(`/play?roomId=${roomCode}&limit=25`, {
-      headers: { Authorization: `Bearer ${user.token}` },
-    });
-    if (response.status === 200) {
-      const { data } = response.data;
-      setPlays(data);
-    }
-  }, [roomCode, user.token]);
-
   React.useEffect(() => {
+    let mounted = true;
+
+    const fetchPlays = async () => {
+      const response = await client.get(`/play?roomId=${roomCode}&limit=25`);
+      if (mounted && response.status === 200) {
+        const { data } = response.data;
+        setPlays(data);
+      }
+    };
+
     socket.on('plays', fetchPlays);
-  }, [fetchPlays]);
+
+    return () => {
+      mounted = false;
+    };
+  }, [roomCode]);
 
   const sendAnswer: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
-    if (user.token && currentAnswer && room.music) {
-      const response = await client.post(
-        `/play`,
-        {
-          answer: currentMsg,
-          roomId: roomCode,
-          musicId: room.music.id,
-        },
-        {
-          headers: { Authorization: `Bearer ${user.token}` },
-        },
-      );
+    if (currentAnswer && room.music) {
+      const response = await client.post(`/play`, {
+        answer: currentAnswer,
+        roomId: roomCode,
+        musicId: room.music.id,
+      });
+      console.log(response);
       if (response.status === 201) {
         setCurrentAnswer('');
       }
@@ -174,8 +169,13 @@ const RoomPage: React.FC = () => {
               <p className="chat-box p-3">
                 Gênero: {room.genre.name}
                 <br />
-                Quantidade de letras no nome da música: 7<br />
-                Quantidade de letras no nome do autor: 7
+                {room.music ? 'Tocando...' : 'Aguardando...'}
+                <br />
+                Quantidade de letras no nome da música:{' '}
+                {room?.music?.name?.length || '...'}
+                <br />
+                Quantidade de letras no nome do autor:{' '}
+                {room?.music?.author?.length || '...'}
               </p>
             </Col>
             <Col sm={6} className="mb-3">

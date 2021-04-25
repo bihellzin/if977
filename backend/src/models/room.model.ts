@@ -28,13 +28,16 @@ export class Room extends BaseEntity {
   startedAt: Date;
 
   // Relations
-  @ManyToOne(() => Genre, genre => genre.rooms, { nullable: false })
+  @ManyToOne(() => Genre, genre => genre.rooms, {
+    nullable: false,
+    eager: true,
+  })
   genre: Genre;
 
   @ManyToOne(() => User, user => user.ownerRooms, { nullable: false })
   owner: User;
 
-  @ManyToOne(() => Music, music => music.rooms, { nullable: true })
+  @ManyToOne(() => Music, music => music.rooms, { nullable: true, eager: true })
   music?: Music;
 
   @OneToMany(() => User, player => player.room)

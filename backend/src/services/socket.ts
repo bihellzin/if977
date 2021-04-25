@@ -9,15 +9,16 @@ export function createSocket(server: Express.Application, options = {}) {
     socket.on('join-room', async (roomId: number) => {
       socket.join(`${roomId}`);
       console.log(`Client ${socket.id} join room ${roomId}!`);
-      socket.emit('join-room', true);
+      socket.emit('join-room');
       socket.emit('messages');
       socket.emit('plays');
+      socket.to(`${roomId}`).emit('join-room');
     });
 
     socket.on('leave-room', (roomId: number) => {
       socket.leave(`${roomId}`);
       console.log(`Client ${socket.id} leave room ${roomId}!`);
-      socket.emit('join-room', true);
+      socket.to(`${roomId}`).emit('join-room');
     });
 
     socket.on('disconnect', () => {

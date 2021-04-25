@@ -59,7 +59,7 @@ export class MessageController {
     const data = await messageRepository.save(message);
 
     const socket = req.app.get('socket') as Socket;
-    socket.to(`${message.room.id}`).emit('messages');
+    if (socket) socket.to(`${message.room.id}`).emit('messages');
 
     return res.status(201).json({ data });
   }
@@ -81,7 +81,7 @@ export class MessageController {
     const data = await messageRepository.save(message);
 
     const socket = req.app.get('socket') as Socket;
-    socket.to(`${message.room.id}`).emit('messages');
+    if (socket) socket.to(`${message.room.id}`).emit('messages');
 
     return res.status(200).json({ data });
   }
@@ -94,7 +94,7 @@ export class MessageController {
     await messageRepository.remove(message);
 
     const socket = req.app.get('socket') as Socket;
-    socket.to(`${message.room.id}`).emit('messages');
+    if (socket) socket.to(`${message.room.id}`).emit('messages');
 
     return res.status(200).json({ data: true });
   }

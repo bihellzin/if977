@@ -11,13 +11,11 @@ import {
 } from 'react-bootstrap';
 import { FiSearch, GrClose } from 'react-icons/all';
 import ButtonRound from 'components/ButtonRound';
-import { AuthContext } from 'services/auth';
 import './styles.scss';
 import client, { Room } from 'services/api';
 
 const Home: React.FC = () => {
   const history = useHistory();
-  const [user] = React.useContext(AuthContext);
   const [selectedRoom, setSelectedRoom] = React.useState(0);
   const [keyword, setKeyword] = React.useState('');
   const [page, setPage] = React.useState(0);
@@ -25,24 +23,29 @@ const Home: React.FC = () => {
   const [rooms, setRooms] = React.useState<Room[]>([]);
 
   React.useEffect(() => {
+    let mounted = true;
+
     const fetchData = async () => {
       const { status, data } = await client.get(
         `/room?limit=6&offset=${page * 6}`,
-        {
-          headers: { Authorization: `Bearer ${user.token}` },
-        },
       );
-      if (status === 200 && data.data) {
-        setRooms(data.data);
-        setTotal(data.total);
-      } else {
-        setRooms([]);
-        setTotal(0);
+      if (mounted) {
+        if (status === 200 && data.data) {
+          setRooms(data.data);
+          setTotal(data.total);
+        } else {
+          setRooms([]);
+          setTotal(0);
+        }
       }
     };
 
     fetchData();
-  }, [user.token, page]);
+
+    return () => {
+      mounted = false;
+    };
+  }, [page]);
 
   const handleRoomClick = (id: number) => {
     setSelectedRoom(id);
@@ -59,9 +62,6 @@ const Home: React.FC = () => {
 
     const { status, data } = await client.get(
       `/room?limit=6&offset=${page * 6}&query=${keyword}`,
-      {
-        headers: { Authorization: `Bearer ${user.token}` },
-      },
     );
     if (status === 200 && data.data) {
       setRooms(data.data);

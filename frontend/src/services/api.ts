@@ -4,6 +4,12 @@ const client = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
 });
 
+client.interceptors.request.use(function (config) {
+  const token = sessionStorage.getItem('token');
+  config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
 export default client;
 
 export interface User {
