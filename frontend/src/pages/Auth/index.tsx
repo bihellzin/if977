@@ -8,6 +8,7 @@ import './styles.scss';
 
 const AuthPage: React.FC = () => {
   const history = useHistory();
+
   const avatars = [
     '/avatars/avatar-1.png',
     '/avatars/avatar-2.png',
@@ -16,15 +17,19 @@ const AuthPage: React.FC = () => {
     '/avatars/avatar-5.png',
     '/avatars/avatar-6.png',
   ];
+
   const [avatar, setAvatar] = React.useState(
     avatars[Math.floor(Math.random() * avatars.length)],
   );
+
   const [nickname, setNickname] = React.useState('');
+
   const [, setUser] = React.useContext(AuthContext);
 
   const handlerNickname: React.ChangeEventHandler<HTMLInputElement> = e => {
     setNickname(e.currentTarget.value);
   };
+
   const handlerAvatar = () => {
     setAvatar(
       p =>
@@ -42,12 +47,16 @@ const AuthPage: React.FC = () => {
 
   const handlerPlay: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
+
     if (nickname.length >= 3 && nickname.length <= 8) {
       const response = await client.post('/auth', { nickname, avatar });
+
       if (response.status === 201) {
         const { data, token } = response.data;
+
         sessionStorage.setItem('token', token);
         setUser(data);
+
         if (history.location.pathname === '/') {
           history.push('/lobby');
         }
@@ -67,7 +76,14 @@ const AuthPage: React.FC = () => {
       <Row className="justify-content-center">
         <Col md={2}>
           <Row className="justify-content-center">
-            <Figure onClick={handlerAvatar} className="pointer-hover">
+            <Figure
+              className="pointer-hover"
+              data-toggle="tooltip"
+              data-placement="right"
+              data-delay='{"show":"1000"}'
+              onClick={handlerAvatar}
+              title="Clique para selecionar outro avatar"
+            >
               <Figure.Image
                 width={160}
                 height={160}
@@ -78,19 +94,26 @@ const AuthPage: React.FC = () => {
           </Row>
           <Form onSubmit={handlerPlay}>
             <Form.Row>
-              <InputGroup className="group-custom mb-3">
+              <InputGroup className="group-custom mb-1">
                 <input
                   className="control-custom"
                   placeholder="Nickname"
                   value={nickname}
                   onChange={handlerNickname}
+                  required
                   disabled={nickname.length < 3 && nickname.length > 8}
                 />
               </InputGroup>
+              <small
+                id="passwordHelpBlock"
+                className="form-text nickname-help-text"
+              >
+                Seu nick deve conter entre 3 e 8 caracteres
+              </small>
             </Form.Row>
             <Form.Row>
               <Button
-                className="button-custom mt-1"
+                className="button-custom mt-3"
                 variant="primary"
                 type="submit"
                 block
