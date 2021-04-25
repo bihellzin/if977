@@ -11,10 +11,6 @@ import { GenreController } from './genre.controller';
 
 let connection: typeorm.Connection;
 let app: express.Application;
-<<<<<<< HEAD
-=======
-let appAuth: express.Application;
->>>>>>> 6ab6d3dce8fd57e9ae0b65ad7a8bbcd1ff722435
 let req: supertest.SuperTest<supertest.Test>;
 let token: string;
 describe('User Suite', () => {
