@@ -1,12 +1,14 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import Textarea from 'components/TextArea';
-import { Row, Col, Form, InputGroup } from 'react-bootstrap';
+import { Row, Col, Figure, Form, InputGroup } from 'react-bootstrap';
 import { GrClose, AiOutlineSend } from 'react-icons/all';
 import { AuthContext } from 'services/auth';
 import socket from 'services/socket';
 import client, { DEFAULT_ROOM, Room, User, Message, Play } from 'services/api';
 import { SoundContext } from 'services/sound';
+import play from 'assets/play.svg';
+import pause from 'assets/pause.svg';
 import './styles.scss';
 
 const RoomPage: React.FC = () => {
@@ -169,7 +171,7 @@ const RoomPage: React.FC = () => {
         >
           <h3 className="font-weight-bold">Jogadores</h3>
           {players.map(player => (
-            <div key={player.id} className="card-room mt-3 mb-3">
+            <div key={player.id} className="card-room mb-3">
               <Row className="p-3">
                 <Col>
                   <img height={64} src={player.avatar} alt="avatar" />
@@ -189,17 +191,35 @@ const RoomPage: React.FC = () => {
           <Row>
             <Col xs={12} className="mt-3 mb-3">
               <h3 className="font-weight-bold">Música</h3>
-              <p className="chat-box p-3">
-                Gênero: {room.genre.name}
-                <br />
-                {room.music ? 'Tocando...' : 'Aguardando...'}
-                <br />
-                Quantidade de letras no nome da música:{' '}
-                {room?.music?.name?.length || '...'}
-                <br />
-                Quantidade de letras no nome do autor:{' '}
-                {room?.music?.author?.length || '...'}
-              </p>
+              <div className="d-flex chat-box p-3">
+                <Col className="d-flex flex-wrap justify-content-around">
+                  <Figure>
+                    <Figure.Image
+                      alt="play/pause button"
+                      src={room.music ? play : pause}
+                      height={100}
+                      width={100}
+                    />
+                  </Figure>
+                  <p className="d-flex text-center justify-content-center pt-4">
+                    {room.music ? 'Tocando...' : 'Aguardando...'}
+                  </p>
+                </Col>
+                <Col>
+                  <p className="d-inline font-weight-bold">Gênero:</p>{' '}
+                  {room.genre.name}
+                  <br />
+                  <p className="d-inline font-weight-bold">
+                    Quantidade de letras no nome da música:{' '}
+                  </p>
+                  {room?.music?.name?.length || '...'}
+                  <br />
+                  <p className="d-inline font-weight-bold">
+                    Quantidade de letras no nome do autor:{' '}
+                  </p>
+                  {room?.music?.author?.length || '...'}
+                </Col>
+              </div>
             </Col>
             <Col sm={6} className="mb-3">
               <h3 className="font-weight-bold">Repostas</h3>
