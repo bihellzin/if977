@@ -15,7 +15,7 @@ let connection: typeorm.Connection;
 let app: express.Application;
 let req: supertest.SuperTest<supertest.Test>;
 let token: string;
-describe('User Suite', () => {
+describe('Message Suite', () => {
   beforeAll(async () => {
     connection = await Database.createConnection();
     app = new App([new AuthController(), new GenreController(), new RoomController(), new UserController(), new MessageController()]).app;
