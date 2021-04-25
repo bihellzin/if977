@@ -146,7 +146,7 @@ export class PlayController {
         const resultUpdate = await manager
           .createQueryBuilder()
           .update(Room)
-          .set({ startedAt: () => 'NOW()' })
+          .set({ startedAt: data.createdAt })
           .where('id = :roomId', { roomId: play.room.id })
           .execute();
         console.log('Update room' + resultUpdate.affected);
