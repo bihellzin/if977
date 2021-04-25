@@ -26,12 +26,16 @@ const RoomPage: React.FC = () => {
       await client.patch(`/user/${user.id}`, { roomId: roomCode });
       socket.emit('join-room', roomCode);
     };
+
     joinRoom();
+
     return () => {
       const leaveRoom = async () => {
         await client.patch(`/user/${user.id}`, { roomId: null });
       };
+
       leaveRoom();
+
       socket.emit('leave-room', roomCode);
     };
   }, [roomCode, user.id]);
@@ -41,10 +45,13 @@ const RoomPage: React.FC = () => {
 
     socket.on('join-room', async () => {
       const resRoom = await client.get(`/room/${roomCode}`);
+
       if (mounted && resRoom.status === 200) {
         const { data } = resRoom.data;
+
         setRoom(data);
         music.pause();
+
         if (data.music) {
           const url = `${window.location.origin}/musics/${data.music.url}`;
           const song = new Audio(url);
@@ -54,7 +61,9 @@ const RoomPage: React.FC = () => {
           music.pause();
         }
       }
+
       const resUsers = await client.get(`/user?roomId=${roomCode}`);
+
       if (mounted && resUsers.status === 200) {
         const { data } = resUsers.data;
         setPlayers(data);
@@ -71,8 +80,10 @@ const RoomPage: React.FC = () => {
 
     const fetchMessages = async () => {
       const response = await client.get(`/message?roomId=${roomCode}&limit=25`);
+
       if (mounted && response.status === 200) {
         const { data } = response.data;
+
         setMessages(data);
       }
     };
@@ -86,11 +97,13 @@ const RoomPage: React.FC = () => {
 
   const sendMessage: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
+
     if (currentMsg) {
       const response = await client.post(`/message`, {
         content: currentMsg,
         roomId: roomCode,
       });
+
       if (response.status === 201) {
         setCurrentMsg('');
       }
@@ -102,8 +115,10 @@ const RoomPage: React.FC = () => {
 
     const fetchPlays = async () => {
       const response = await client.get(`/play?roomId=${roomCode}&limit=25`);
+
       if (mounted && response.status === 200) {
         const { data } = response.data;
+
         setPlays(data);
       }
     };
@@ -123,7 +138,9 @@ const RoomPage: React.FC = () => {
         roomId: roomCode,
         musicId: room.music.id,
       });
+
       console.log(response);
+
       if (response.status === 201) {
         setCurrentAnswer('');
       }
@@ -144,7 +161,13 @@ const RoomPage: React.FC = () => {
         </Col>
       </Row>
       <Row>
-        <Col xs={12} sm={3} className="pt-3 overflow-auto" style={{ maxHeight: "54.9vh" }}>
+        <Col
+          xs={12}
+          sm={3}
+          className="pt-3 overflow-auto"
+          style={{ maxHeight: '54.9vh' }}
+        >
+          <h3 className="font-weight-bold">Jogadores</h3>
           {players.map(player => (
             <div key={player.id} className="card-room mt-3 mb-3">
               <Row className="p-3">
@@ -165,7 +188,7 @@ const RoomPage: React.FC = () => {
         <Col sm={9}>
           <Row>
             <Col xs={12} className="mt-3 mb-3">
-              <h3>Música</h3>
+              <h3 className="font-weight-bold">Música</h3>
               <p className="chat-box p-3">
                 Gênero: {room.genre.name}
                 <br />
@@ -179,7 +202,7 @@ const RoomPage: React.FC = () => {
               </p>
             </Col>
             <Col sm={6} className="mb-3">
-              <h3>Repostas</h3>
+              <h3 className="font-weight-bold">Repostas</h3>
               <Form onSubmit={sendAnswer} className="chat-box p-3">
                 <Textarea value={plays}></Textarea>
                 <InputGroup className="chat-input">
@@ -194,7 +217,7 @@ const RoomPage: React.FC = () => {
               </Form>
             </Col>
             <Col sm={6} className="mb-3">
-              <h3>Bate-papo</h3>
+              <h3 className="font-weight-bold">Bate-papo</h3>
               <Form onSubmit={sendMessage} className="chat-box p-3">
                 <Textarea value={messages}></Textarea>
                 <InputGroup className="chat-input">
