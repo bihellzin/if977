@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Row,
-  Col,
-  Button,
-  Figure,
-  InputGroup,
-  FormControl,
-  Form,
-} from 'react-bootstrap';
+import { Row, Col, Button, Figure, InputGroup, Form } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import logo from 'assets/logo.png';
 import client from 'services/api';
@@ -24,9 +16,11 @@ const AuthPage: React.FC = () => {
     '/avatars/avatar-5.png',
     '/avatars/avatar-6.png',
   ];
-  const [avatar, setAvatar] = React.useState('/avatars/avatar-1.png');
+  const [avatar, setAvatar] = React.useState(
+    avatars[Math.floor(Math.random() * avatars.length)],
+  );
   const [nickname, setNickname] = React.useState('');
-  const [user, setUser] = React.useContext(AuthContext);
+  const [, setUser] = React.useContext(AuthContext);
 
   const handlerNickname: React.ChangeEventHandler<HTMLInputElement> = e => {
     setNickname(e.currentTarget.value);
@@ -40,15 +34,23 @@ const AuthPage: React.FC = () => {
     );
   };
 
+  React.useEffect(() => {
+    if (history.location.pathname === '/') {
+      sessionStorage.removeItem('token');
+    }
+  }, [history]);
+
   const handlerPlay: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
     if (nickname.length >= 3 && nickname.length <= 8) {
-      console.log('hello');
       const response = await client.post('/auth', { nickname, avatar });
       if (response.status === 201) {
         const { data, token } = response.data;
-        setUser({ ...data, token });
-        history.push('/lobby');
+        sessionStorage.setItem('token', token);
+        setUser(data);
+        if (history.location.pathname === '/') {
+          history.push('/lobby');
+        }
       }
     }
   };
@@ -65,7 +67,7 @@ const AuthPage: React.FC = () => {
       <Row className="justify-content-center">
         <Col md={2}>
           <Row className="justify-content-center">
-            <Figure onClick={handlerAvatar}>
+            <Figure onClick={handlerAvatar} className="pointer-hover">
               <Figure.Image
                 width={160}
                 height={160}
@@ -76,9 +78,9 @@ const AuthPage: React.FC = () => {
           </Row>
           <Form onSubmit={handlerPlay}>
             <Form.Row>
-              <InputGroup className="search-box mb-3">
-                <FormControl
-                  className="input-control"
+              <InputGroup className="group-custom mb-3">
+                <input
+                  className="control-custom"
                   placeholder="Nickname"
                   value={nickname}
                   onChange={handlerNickname}
@@ -88,7 +90,7 @@ const AuthPage: React.FC = () => {
             </Form.Row>
             <Form.Row>
               <Button
-                className="button-default mt-1"
+                className="button-custom mt-1"
                 variant="primary"
                 type="submit"
                 block

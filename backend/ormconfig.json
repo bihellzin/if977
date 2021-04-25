@@ -5,8 +5,8 @@
   "logging": false,
   "dropSchema": true,
   "entities": ["./src/models/*.model.ts"],
-  "migrations": ["./src/databases/migration/**/*.ts"],
-  "subscribers": ["./src/databases/subscriber/**/*.ts"],
+  "migrations": ["./src/databases/migration/*.ts"],
+  "subscribers": ["./src/databases/subscriber/*.ts"],
   "cli": {
     "migrationsDir": "./src/databases/migration",
     "entitiesDir": "./src/models",

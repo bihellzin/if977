@@ -9,90 +9,126 @@ import {
   Card,
   InputGroup,
 } from 'react-bootstrap';
-import {
-  FiSearch,
-  GrClose,
-  FiChevronRight,
-  FiChevronLeft,
-} from 'react-icons/all';
+import { FiSearch, GrClose } from 'react-icons/all';
 import ButtonRound from 'components/ButtonRound';
 import './styles.scss';
+import client, { Room } from 'services/api';
 
 const Home: React.FC = () => {
   const history = useHistory();
-  const [selectedRoom, setSelectedRoom] = React.useState('');
-  const [nickname, setNickname] = React.useState('');
+  const [selectedRoom, setSelectedRoom] = React.useState(0);
   const [keyword, setKeyword] = React.useState('');
-  const [page, setPage] = React.useState(1);
-  const rooms = [
-    { code: '1', name: 'Room 1', theme: 'Rock', owner: 'asd', players: 3 },
-    { code: '2', name: 'Room 1', theme: 'Rock', owner: 'asd', players: 3 },
-    { code: '3', name: 'Room 1', theme: 'Rock', owner: 'asd', players: 3 },
-    { code: '4', name: 'Room 1', theme: 'Rock', owner: 'asd', players: 3 },
-    { code: '5', name: 'Room 1', theme: 'Rock', owner: 'sdf', players: 3 },
-    { code: '6', name: 'Room 1', theme: 'Rock', owner: 'fgh', players: 3 },
-  ];
+  const [page, setPage] = React.useState(0);
+  const [total, setTotal] = React.useState(0);
+  const [rooms, setRooms] = React.useState<Room[]>([]);
 
-  const handleRoomClick = (code: string) => {
-    setSelectedRoom(code);
+  React.useEffect(() => {
+    let mounted = true;
+
+    const fetchData = async () => {
+      const { status, data } = await client.get(
+        `/room?limit=6&offset=${page * 6}`,
+      );
+      if (mounted) {
+        if (status === 200 && data.data) {
+          setRooms(data.data);
+          setTotal(data.total);
+        } else {
+          setRooms([]);
+          setTotal(0);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      mounted = false;
+    };
+  }, [page]);
+
+  const handleRoomClick = (id: number) => {
+    setSelectedRoom(id);
+  };
+
+  const handleRoomEntryClick = () => {
+    if (rooms.some(r => r.id === selectedRoom)) {
+      history.push(`/room/${selectedRoom}`);
+    }
+  };
+
+  const handleKeywordSubmit: React.FormEventHandler<HTMLFormElement> = async e => {
+    e.preventDefault();
+
+    const { status, data } = await client.get(
+      `/room?limit=6&offset=${page * 6}&query=${keyword}`,
+    );
+    if (status === 200 && data.data) {
+      setRooms(data.data);
+      setTotal(data.total);
+    } else {
+      setRooms([]);
+      setTotal(0);
+    }
+  };
+
+  const handlerClickCancel = () => {
+    history.push('/');
   };
 
   return (
     <div className="d-flex flex-column pt-3">
-      <Row className="pt-3">
+      <Row>
         <Col xs={12}>
-          <div
-            className="button-close ml-auto"
-            onClick={() => history.goBack()}
-          >
+          <div className="button-close ml-auto" onClick={handlerClickCancel}>
             <GrClose size={24} />
           </div>
         </Col>
       </Row>
       <Row className="justify-content-center p-3">
         <Col xs={10} md={3} className="ml-auto mr-auto">
-          <Form>
+          <Form onSubmit={handleKeywordSubmit}>
             <Form.Row className="mb-3">
               <InputGroup className="search-box">
-                <Form.Control
-                  className="input-control"
+                <input
+                  className="control-custom"
                   value={keyword}
                   onChange={e => setKeyword(e.target.value)}
                   placeholder="Pesquisar uma sala"
                 />
-                <FiSearch size={24} />
+                <FiSearch size={24} style={{ alignSelf: 'center' }} />
               </InputGroup>
             </Form.Row>
           </Form>
         </Col>
       </Row>
       <Row className="justify-content-center pt-3">
-        <Col xs={10}>
+        <Col sm={12} md={10}>
           <CardColumns>
             {rooms.map(room => {
               return (
                 <Card
-                  key={room.code}
+                  key={room.id}
                   className={
-                    selectedRoom === room.code
-                      ? 'card-room-selected'
-                      : 'card-room'
+                    selectedRoom === room.id
+                      ? 'card-room-selected mt-3 mb-3'
+                      : 'card-room mt-3 mb-3'
                   }
-                  onClick={() => handleRoomClick(room.code)}
+                  onClick={() => handleRoomClick(room.id)}
                 >
                   <Card.Body>
                     <Card.Title className="label-black text-center">
-                      Sala do {room.owner}
+                      Sala do {room.owner.nickname}
                     </Card.Title>
                     <Row>
                       <Col xs={6}>
                         <Card.Text className="label-grey text-center">
-                          Jogadores: {room.players}
+                          Jogadores: {room.playerCount}
                         </Card.Text>
                       </Col>
                       <Col xs={6}>
                         <Card.Text className="label-grey text-center">
-                          Gênero: {room.theme}
+                          Gênero: {room.genre.name}
                         </Card.Text>
                       </Col>
                     </Row>
@@ -106,7 +142,7 @@ const Home: React.FC = () => {
             <Col xs={6}>
               <ButtonRound
                 direction="left"
-                onClick={() => setPage(Math.max(page - 1, 1))}
+                onClick={() => setPage(Math.max(page - 1, 0))}
                 size={24}
               />
             </Col>
@@ -114,13 +150,15 @@ const Home: React.FC = () => {
               <ButtonRound
                 className="ml-auto"
                 direction="right"
-                onClick={() => setPage(Math.min(page + 1, rooms.length))}
+                onClick={() =>
+                  setPage(Math.min(page + 1, Math.floor(total / 6)))
+                }
                 size={24}
               />
             </Col>
-            <Col xs={12} md={4} className="mt-3 mb-3">
+            <Col xs={12} md={4} className="mt-3">
               <Button
-                className="button-default"
+                className="button-custom"
                 variant="primary"
                 onClick={() => history.push('/createroom')}
                 size="lg"
@@ -131,9 +169,9 @@ const Home: React.FC = () => {
             </Col>
             <Col xs={12} md={4} className="mt-3 mb-3">
               <Button
-                className="button-default"
+                className="button-custom"
                 variant="primary"
-                onClick={() => history.push('/room/test')}
+                onClick={handleRoomEntryClick}
                 size="lg"
                 block
               >

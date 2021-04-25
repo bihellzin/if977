@@ -48,7 +48,7 @@ const JwtAuth = (req: any, res: any, next: NextFunction) => {
     { session: false },
     (err: any, user: User, info: any) => {
       if (err) next(err);
-      if (!user) throw new HttpException(401, 'Invalid Token!');
+      if (!user) next(new HttpException(401, 'Invalid Token!'));
       req.user = user;
       next();
     },

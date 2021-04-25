@@ -1,0 +1,12 @@
+.button-round {
+  width: 3em;
+  height: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  border-radius: 100%;
+  cursor: pointer;
+}

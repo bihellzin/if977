@@ -1,0 +1,51 @@
+.control-chat {
+  position: relative;
+  flex: 1;
+  height: calc(1.5em + 0.75rem + 2px);
+  width: 100%;
+  border: 0;
+}
+
+.label-pontuacao {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 23px;
+  line-height: 32px;
+  color: #18191f;
+}
+
+.chat-control {
+  border: 0;
+}
+
+.chat-box {
+  background: #ffffff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 0px #18191f;
+  border-radius: 16px;
+}
+
+.chat-input {
+  background: #ffffff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  border-radius: 16px;
+  justify-content: center;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.chat-message {
+  position: absolute;
+  width: 346px;
+  height: 56px;
+  left: 13px;
+  top: 232px;
+  background: #ffffff;
+  border: 2px solid #18191f;
+  box-sizing: border-box;
+  border-radius: 66px;
+}

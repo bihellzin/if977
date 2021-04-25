@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { getRepository } from 'typeorm';
-import HttpException, { asyncHandler } from '../middlewares/errorHandler';
+import { asyncHandler } from '../middlewares/errorHandler';
 import { JwtAuth } from '../middlewares/passport';
 import { User } from '../models/user.model';
 import jwt from 'jsonwebtoken';
@@ -15,11 +15,11 @@ export class AuthController {
   }
 
   async signup(req: Request, res: Response) {
+    const { nickname, avatar } = req.body;
+
     const userRepository = getRepository(User);
 
-    const user = new User();
-    user.nickname = req.body.nickname;
-
+    const user = userRepository.create({ nickname, avatar });
     const data = await userRepository.save(user);
     const token = jwt.sign(
       { sub: data.id },
@@ -34,6 +34,7 @@ export class AuthController {
   }
 
   async currentUser(req: Request, res: Response) {
-    return res.status(200).json({ data: req.user });
+    const data = req.user as User;
+    return res.status(200).json({ data });
   }
 }

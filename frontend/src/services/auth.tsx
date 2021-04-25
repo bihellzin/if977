@@ -12,7 +12,7 @@ interface User {
   userType: UserTypes;
 }
 
-const DEFAULT_USER = {
+export const DEFAULT_USER = {
   id: '',
   name: '',
   email: '',
@@ -27,6 +27,7 @@ export const AuthConsumer = AuthContext.Consumer;
 
 export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = React.useState<User>(DEFAULT_USER);
+
   return (
     <AuthContext.Provider value={[user, setUser]}>
       {children}

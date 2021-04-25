@@ -1,10 +1,13 @@
 import { validateOrReject } from 'class-validator';
 import {
+  AfterLoad,
   BaseEntity,
   BeforeInsert,
   BeforeUpdate,
   CreateDateColumn,
   Entity,
+  getConnection,
+  getRepository,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -25,13 +28,16 @@ export class Room extends BaseEntity {
   startedAt: Date;
 
   // Relations
-  @ManyToOne(() => Genre, genre => genre.rooms, { nullable: false })
+  @ManyToOne(() => Genre, genre => genre.rooms, {
+    nullable: false,
+    eager: true,
+  })
   genre: Genre;
 
   @ManyToOne(() => User, user => user.ownerRooms, { nullable: false })
   owner: User;
 
-  @ManyToOne(() => Music, music => music.rooms, { nullable: true })
+  @ManyToOne(() => Music, music => music.rooms, { nullable: true, eager: true })
   music?: Music;
 
   @OneToMany(() => User, player => player.room)
@@ -48,5 +54,15 @@ export class Room extends BaseEntity {
   @BeforeUpdate()
   async validate() {
     await validateOrReject(this, { skipUndefinedProperties: true });
+  }
+
+  protected playerCount: number;
+
+  @AfterLoad()
+  async getPlayerCount() {
+    const userReposity = getRepository(User);
+    this.playerCount = await userReposity.count({
+      where: { room: { id: this.id } },
+    });
   }
 }

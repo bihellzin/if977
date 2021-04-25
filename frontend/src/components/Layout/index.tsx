@@ -6,7 +6,7 @@ import './styles.scss';
 const Layout: React.FC = ({ children }) => {
   return (
     <Container id="wrap">
-      <Figure style={{ position: 'absolute' }}>
+      <Figure className="background-img">
         <Figure.Image alt="Background" src={background} />
       </Figure>
       {children}

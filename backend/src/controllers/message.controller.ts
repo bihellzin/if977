@@ -1,8 +1,9 @@
 import { Request, Response, Router } from 'express';
+import { Socket } from 'socket.io';
 import { getRepository } from 'typeorm';
-import HttpException, { asyncHandler } from '../middlewares/errorHandler';
+import { asyncHandler } from '../middlewares/errorHandler';
+import { JwtAuth } from '../middlewares/passport';
 import { Message } from '../models/message.model';
-import { Music } from '../models/music.model';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 
@@ -11,81 +12,90 @@ export class MessageController {
   public path = '/message';
 
   constructor() {
-    this.router.get(this.path, asyncHandler(this.findAll));
-    this.router.get(`${this.path}/:id`, asyncHandler(this.findOne));
-    this.router.post(this.path, asyncHandler(this.create));
-    this.router.put(`${this.path}/:id`, asyncHandler(this.update));
-    this.router.delete(`${this.path}/:id`, asyncHandler(this.delete));
+    this.router.get(this.path, JwtAuth, asyncHandler(this.findAll));
+    this.router.get(`${this.path}/:id`, JwtAuth, asyncHandler(this.findOne));
+    this.router.post(this.path, JwtAuth, asyncHandler(this.create));
+    this.router.patch(`${this.path}/:id`, JwtAuth, asyncHandler(this.update));
+    this.router.delete(`${this.path}/:id`, JwtAuth, asyncHandler(this.delete));
   }
 
   async findAll(req: Request, res: Response) {
+    const roomId = parseInt((req.query.roomId as string) || '0');
     const offset = parseInt((req.query.offset as string) || '0');
-    const limit = Math.max(parseInt((req.query.limit as string) || '5'), 25);
-    const musicRepository = getRepository(Music);
-    const [data, total] = await musicRepository.findAndCount({
+    const limit = Math.min(parseInt((req.query.limit as string) || '5'), 25);
+
+    const messageRepository = getRepository(Message);
+    const [data, total] = await messageRepository.findAndCount({
+      where: { room: { id: roomId } },
+      relations: ['user'],
+      order: { createdAt: 'DESC' },
       skip: offset,
       take: limit,
     });
-    return res.status(200).json({ total, offset, limit, data });
+
+    return res.status(200).json({ total, offset, limit, data: data.reverse() });
   }
 
   async findOne(req: Request, res: Response) {
+    const { id } = req.params;
+
     const messageRepository = getRepository(Message);
-    const message = await messageRepository.findOne(req.params.id);
-    if (!message) {
-      throw new HttpException(404, 'Music not found!');
-    }
+    const message = await messageRepository.findOneOrFail(id);
+
     return res.status(200).json({ data: message });
   }
 
   async create(req: Request, res: Response) {
     const { content, roomId } = req.body;
+    const user = req.user as User;
+
     const messageRepository = getRepository(Message);
     const roomRepository = getRepository(Room);
+
     const message = messageRepository.create();
     message.content = content;
-    message.user = req.user as User;
-    if (!roomId) {
-      const room = await roomRepository.findOne(roomId);
-      if (!room) {
-        throw new HttpException(404, 'Music not found!');
-      }
-      message.room = room;
-    }
+    message.user = user;
+    message.room = await roomRepository.findOneOrFail(roomId);
     const data = await messageRepository.save(message);
+
+    const socket = req.app.get('socket') as Socket;
+    if (socket) socket.to(`${message.room.id}`).emit('messages');
+
     return res.status(201).json({ data });
   }
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
-    const { roomId } = req.body;
+    const { content, roomId } = req.body;
+    const user = req.user as User;
+
     const roomRepository = getRepository(Room);
     const messageRepository = getRepository(Message);
-    const message = await messageRepository.findOne(id);
-    if (!message) {
-      throw new HttpException(404, 'Music not found!');
-    }
-    message.user = req.user as User;
-    if (!roomId) {
-      const room = await roomRepository.findOne(roomId);
-      if (!room) {
-        throw new HttpException(404, 'Room not found!');
-      }
-      message.room = room;
+
+    const message = await messageRepository.findOneOrFail(id);
+    message.content = content || message.content;
+    message.user = user;
+    if (roomId) {
+      message.room = await roomRepository.findOneOrFail(roomId);
     }
     const data = await messageRepository.save(message);
+
+    const socket = req.app.get('socket') as Socket;
+    if (socket) socket.to(`${message.room.id}`).emit('messages');
+
     return res.status(200).json({ data });
   }
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;
+
     const messageRepository = getRepository(Message);
-    const musicRepository = getRepository(Music);
-    const music = await messageRepository.findOne(id);
-    if (!music) {
-      throw new HttpException(404, 'Music not found!');
-    }
-    const result = await musicRepository.findOne(id);
-    return res.status(200).json({ data: Boolean(result) });
+    const message = await messageRepository.findOneOrFail(id);
+    await messageRepository.remove(message);
+
+    const socket = req.app.get('socket') as Socket;
+    if (socket) socket.to(`${message.room.id}`).emit('messages');
+
+    return res.status(200).json({ data: true });
   }
 }

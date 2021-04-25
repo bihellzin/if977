@@ -9,7 +9,7 @@ let connection: typeorm.Connection;
 let app: express.Application;
 let req: supertest.SuperTest<supertest.Test>;
 
-describe('User Suite', () => {
+describe('Auth Suite', () => {
   beforeAll(async () => {
     connection = await Database.createConnection();
     app = new App([new AuthController()]).app;
@@ -34,7 +34,7 @@ describe('User Suite', () => {
       .set('Authorization', `Bearer ${result.body.token}`);
 
     expect(res.status).toEqual(200);
-    expect(res.body.data).toEqual(result.body.data);
+    expect(res.body.data).toMatchObject(result.body.data);
   });
 
   it('Signin invalid token', async () => {

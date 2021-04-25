@@ -16,9 +16,10 @@ const Textarea: React.FC<TextareaProps> = ({ value, children }) => {
 
   return (
     <div ref={textarea} className="message-box">
-      {value.map(({ id, message, from }) => (
-        <div key={id}>
-          <strong>{`${from}:`}</strong> {`${message}`}
+      {value.map(({ id, content, answer, user }) => (
+        <div key={id} className="d-block p-1">
+          <img className="m-1" height={24} src={user.avatar} alt="avatar" />
+          <strong>{`${user.nickname}:`}</strong> {`${content || answer}`}
         </div>
       ))}
       {children}
