@@ -63,6 +63,7 @@ describe('Room Suite', () => {
 
     expect(resRoom.status).toEqual(201);
     expect(resRoom.body).toBeTruthy();
+
   });
 
   it('Create with genre', async () => {
@@ -116,13 +117,14 @@ describe('Room Suite', () => {
       .set('Authorization', `Bearer ${token}`);
     expect(resFind.status).toEqual(200);
     expect(resFind.body).toBeTruthy();
-  });
 
-  it('Update', async () => {
-    const resGenre = await req
-      .post('/genre')
-      .send({ name: 'Rosque' })
-      .set('Authorization', `Bearer ${token}`);
+  })
+
+  it('Update', async() => {
+
+    const resGenre = await req.post('/genre').send({ name: "Rosque" })
+    .set('Authorization', `Bearer ${token}`);
+
     expect(resGenre.status).toEqual(201);
     expect(resGenre.body).toBeTruthy();
 
@@ -205,12 +207,44 @@ describe('Room Suite', () => {
     expect(resGenre.status).toEqual(201);
     expect(resGenre.body).toBeTruthy();
 
-    const resGenre2 = await req
-      .post('/genre')
-      .send({ name: 'Punk' })
-      .set('Authorization', `Bearer ${token}`);
-    expect(resGenre.status).toEqual(201);
-    expect(resGenre.body).toBeTruthy();
+
+
+//    it('Find All', async() => {
+
+    //     const resGenre = await req.post('/genre').send({ name: "Rosque" })
+    //     .set('Authorization', `Bearer ${token}`);
+    //     expect(resGenre.status).toEqual(201);
+    //     expect(resGenre.body).toBeTruthy();
+    
+    //     const resGenre2 = await req.post('/genre').send({ name: "Punk" })
+    //     .set('Authorization', `Bearer ${token}`);
+    //     expect(resGenre.status).toEqual(201);
+    //     expect(resGenre.body).toBeTruthy();
+    
+    //     const resMusic = await req.post('/music').send({ name: "Misery Business", author: "Paramore", url: "paramore-misery-business.mp3", genreId: resGenre.body.data.id })
+    //     .set('Authorization', `Bearer ${token}`);
+    
+    //     expect(resMusic.status).toEqual(201);
+    //     expect(resMusic.body).toBeTruthy();
+    
+    //     const resRoom = await req.post('/room').send({ genreId:resGenre.body.data.id , musicId: resMusic.body.data.id })
+    //     .set('Authorization', `Bearer ${token}`);
+    //     expect(resRoom.status).toEqual(201);
+    //     expect(resRoom.body).toBeTruthy();
+    
+    //     const resRoom2 = await req.post('/room').send({ genreId:resGenre2.body.data.id })
+    //     .set('Authorization', `Bearer ${token}`);
+    //     expect(resRoom.status).toEqual(201);
+    //     expect(resRoom.body).toBeTruthy();
+    
+    //     const resFindAll = await req.get('/room/').send()
+    //     .set('Authorization', `Bearer ${token}`);
+    //     expect(resFindAll.status).toEqual(200);
+    //     expect(resFindAll.body).not.toBeTruthy();
+    
+    
+    
+    //   })
 
     const resMusic = await req
       .post('/music')
