@@ -15,8 +15,6 @@ let connection: typeorm.Connection;
 let app: express.Application;
 let req: supertest.SuperTest<supertest.Test>;
 let token: string;
-let podiumRepository: any;
-let podium: any;
 describe('User Suite', () => {
   beforeAll(async () => {
     connection = await Database.createConnection();
@@ -72,7 +70,7 @@ describe('User Suite', () => {
 
     const res = await req
       .post('/user')
-      .send({ nickname: 'Gabriel', avatar: 'avatar.path.gabriel' })
+      .send({ nickname: 'Julin', avatar: 'avatar.path.gabriel' })
       .set('Authorization', `Bearer ${token}`);
     expect(res.status).toEqual(201);
     expect(res.body).toBeTruthy();
@@ -126,7 +124,7 @@ describe('User Suite', () => {
 
     const res = await req
       .post('/user')
-      .send({ nickname: 'Gabriel', avatar: 'avatar.path.gabriel' })
+      .send({ nickname: 'Jão', avatar: 'avatar.path.gabriel' })
       .set('Authorization', `Bearer ${token}`);
     expect(res.status).toEqual(201);
     expect(res.body).toBeTruthy();

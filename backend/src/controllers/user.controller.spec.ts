@@ -9,7 +9,6 @@ import { AuthController } from './auth.controller';
 
 let connection: typeorm.Connection;
 let app: express.Application;
-let appAuth: express.Application;
 let req: supertest.SuperTest<supertest.Test>;
 let token: string;
 describe('User Suite', () => {
