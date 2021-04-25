@@ -47,16 +47,12 @@ const AuthPage: React.FC = () => {
 
   const handlerPlay: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
-
     if (nickname.length >= 3 && nickname.length <= 8) {
       const response = await client.post('/auth', { nickname, avatar });
-
       if (response.status === 201) {
         const { data, token } = response.data;
-
         sessionStorage.setItem('token', token);
         setUser(data);
-
         if (history.location.pathname === '/') {
           history.push('/lobby');
         }
@@ -93,7 +89,7 @@ const AuthPage: React.FC = () => {
             </Figure>
           </Row>
           <Form onSubmit={handlerPlay}>
-            <Form.Row>
+            <Form.Row className="flex-column">
               <InputGroup className="group-custom mb-1">
                 <input
                   className="control-custom"
@@ -104,10 +100,7 @@ const AuthPage: React.FC = () => {
                   disabled={nickname.length < 3 && nickname.length > 8}
                 />
               </InputGroup>
-              <small
-                id="passwordHelpBlock"
-                className="form-text nickname-help-text"
-              >
+              <small className="form-text nickname-help-text">
                 Seu nick deve conter entre 3 e 8 caracteres
               </small>
             </Form.Row>

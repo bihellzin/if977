@@ -29,6 +29,7 @@ const Home: React.FC = () => {
       const { status, data } = await client.get(
         `/room?limit=6&offset=${page * 6}`,
       );
+
       if (mounted) {
         if (status === 200 && data.data) {
           setRooms(data.data);
@@ -63,6 +64,7 @@ const Home: React.FC = () => {
     const { status, data } = await client.get(
       `/room?limit=6&offset=${page * 6}&query=${keyword}`,
     );
+
     if (status === 200 && data.data) {
       setRooms(data.data);
       setTotal(data.total);
@@ -128,7 +130,8 @@ const Home: React.FC = () => {
                       </Col>
                       <Col xs={6}>
                         <Card.Text className="label-grey text-center">
-                          Gênero: {room.genre.name}
+                          Gênero: <br />
+                          {room.genre.name}
                         </Card.Text>
                       </Col>
                     </Row>

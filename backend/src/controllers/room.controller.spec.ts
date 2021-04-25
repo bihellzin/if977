@@ -13,7 +13,6 @@ let connection: typeorm.Connection;
 let app: express.Application;
 let req: supertest.SuperTest<supertest.Test>;
 let token: string;
-let genreRepository: any;
 
 describe('Room Suite', () => {
   beforeAll(async () => {
