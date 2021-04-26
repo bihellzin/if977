@@ -66,21 +66,22 @@ export class User extends BaseEntity {
         .createQueryBuilder()
         .select('COALESCE(ROUND(SUM(podium.score) / 120), 0)', 'wins')
         .from(Play, 'play')
-        .innerJoin(Podium, 'podium')
-        .innerJoin(Room, 'room')
+        .innerJoin(Podium, 'podium', 'podium.id = play.podiumId')
+        .innerJoin(
+          Room,
+          'room',
+          'room.id = play.roomId AND room.startedAt >= play.createdAt',
+        )
         .where('play.userId = :playerId', { playerId: this.id })
         .andWhere('play.roomId = :roomId', { roomId: this.room.id })
-        .andWhere('play.createdAt <= :startedAt', {
-          startedAt: this.room.startedAt,
-        })
         .andWhere('play.accuracy = 100')
         .getRawOne();
       const { score } = await manager
         .createQueryBuilder()
-        .select('COALESCE(ROUND(SUM(podium.score) % 120), 0)', 'score')
+        .select('COALESCE(ROUND(SUM(podium.score)), 0)', 'score')
         .from(Play, 'play')
-        .innerJoin(Podium, 'podium')
-        .innerJoin(Room, 'room')
+        .innerJoin(Podium, 'podium', 'podium.id = play.podiumId')
+        .innerJoin(Room, 'room', 'room.id = play.roomId')
         .where('play.userId = :playerId', { playerId: this.id })
         .andWhere('play.roomId = :roomId', { roomId: this.room.id })
         .andWhere('play.createdAt > :startedAt', {

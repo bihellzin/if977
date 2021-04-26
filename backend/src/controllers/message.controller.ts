@@ -15,8 +15,8 @@ export class MessageController {
     this.router.get(this.path, JwtAuth, asyncHandler(this.findAll));
     this.router.get(`${this.path}/:id`, JwtAuth, asyncHandler(this.findOne));
     this.router.post(this.path, JwtAuth, asyncHandler(this.create));
-    this.router.patch(`${this.path}/:id`, JwtAuth, asyncHandler(this.update));
-    this.router.delete(`${this.path}/:id`, JwtAuth, asyncHandler(this.delete));
+    // this.router.patch(`${this.path}/:id`, JwtAuth, asyncHandler(this.update));
+    // this.router.delete(`${this.path}/:id`, JwtAuth, asyncHandler(this.delete));
   }
 
   async findAll(req: Request, res: Response) {
@@ -62,40 +62,5 @@ export class MessageController {
     if (socket) socket.to(`${message.room.id}`).emit('messages');
 
     return res.status(201).json({ data });
-  }
-
-  async update(req: Request, res: Response) {
-    const { id } = req.params;
-    const { content, roomId } = req.body;
-    const user = req.user as User;
-
-    const roomRepository = getRepository(Room);
-    const messageRepository = getRepository(Message);
-
-    const message = await messageRepository.findOneOrFail(id);
-    message.content = content || message.content;
-    message.user = user;
-    if (roomId) {
-      message.room = await roomRepository.findOneOrFail(roomId);
-    }
-    const data = await messageRepository.save(message);
-
-    const socket = req.app.get('socket') as Socket;
-    if (socket) socket.to(`${message.room.id}`).emit('messages');
-
-    return res.status(200).json({ data });
-  }
-
-  async delete(req: Request, res: Response) {
-    const { id } = req.params;
-
-    const messageRepository = getRepository(Message);
-    const message = await messageRepository.findOneOrFail(id);
-    await messageRepository.remove(message);
-
-    const socket = req.app.get('socket') as Socket;
-    if (socket) socket.to(`${message.room.id}`).emit('messages');
-
-    return res.status(200).json({ data: true });
   }
 }

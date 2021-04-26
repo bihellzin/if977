@@ -1,12 +1,14 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import Textarea from 'components/TextArea';
-import { Row, Col, Form, InputGroup } from 'react-bootstrap';
+import { Row, Col, Figure, Form, InputGroup } from 'react-bootstrap';
 import { GrClose, AiOutlineSend } from 'react-icons/all';
 import { AuthContext } from 'services/auth';
 import socket from 'services/socket';
 import client, { DEFAULT_ROOM, Room, User, Message, Play } from 'services/api';
 import { SoundContext } from 'services/sound';
+import play from 'assets/play.svg';
+import pause from 'assets/pause.svg';
 import './styles.scss';
 
 const RoomPage: React.FC = () => {
@@ -26,12 +28,16 @@ const RoomPage: React.FC = () => {
       await client.patch(`/user/${user.id}`, { roomId: roomCode });
       socket.emit('join-room', roomCode);
     };
+
     joinRoom();
+
     return () => {
       const leaveRoom = async () => {
         await client.patch(`/user/${user.id}`, { roomId: null });
       };
+
       leaveRoom();
+
       socket.emit('leave-room', roomCode);
     };
   }, [roomCode, user.id]);
@@ -41,10 +47,13 @@ const RoomPage: React.FC = () => {
 
     socket.on('join-room', async () => {
       const resRoom = await client.get(`/room/${roomCode}`);
+
       if (mounted && resRoom.status === 200) {
         const { data } = resRoom.data;
+
         setRoom(data);
         music.pause();
+
         if (data.music) {
           const url = `${window.location.origin}/musics/${data.music.url}`;
           const song = new Audio(url);
@@ -54,7 +63,9 @@ const RoomPage: React.FC = () => {
           music.pause();
         }
       }
+
       const resUsers = await client.get(`/user?roomId=${roomCode}`);
+
       if (mounted && resUsers.status === 200) {
         const { data } = resUsers.data;
         setPlayers(data);
@@ -71,8 +82,10 @@ const RoomPage: React.FC = () => {
 
     const fetchMessages = async () => {
       const response = await client.get(`/message?roomId=${roomCode}&limit=25`);
+
       if (mounted && response.status === 200) {
         const { data } = response.data;
+
         setMessages(data);
       }
     };
@@ -86,11 +99,13 @@ const RoomPage: React.FC = () => {
 
   const sendMessage: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
+
     if (currentMsg) {
       const response = await client.post(`/message`, {
         content: currentMsg,
         roomId: roomCode,
       });
+
       if (response.status === 201) {
         setCurrentMsg('');
       }
@@ -102,8 +117,10 @@ const RoomPage: React.FC = () => {
 
     const fetchPlays = async () => {
       const response = await client.get(`/play?roomId=${roomCode}&limit=25`);
+
       if (mounted && response.status === 200) {
         const { data } = response.data;
+
         setPlays(data);
       }
     };
@@ -123,7 +140,9 @@ const RoomPage: React.FC = () => {
         roomId: roomCode,
         musicId: room.music.id,
       });
+
       console.log(response);
+
       if (response.status === 201) {
         setCurrentAnswer('');
       }
@@ -144,9 +163,15 @@ const RoomPage: React.FC = () => {
         </Col>
       </Row>
       <Row>
-        <Col xs={12} sm={3} className="pt-3">
+        <Col
+          xs={12}
+          sm={3}
+          className="pt-3 overflow-auto"
+          style={{ maxHeight: '54.9vh' }}
+        >
+          <h3 className="font-weight-bold">Jogadores</h3>
           {players.map(player => (
-            <div key={player.id} className="card-room mt-3 mb-3">
+            <div key={player.id} className="card-room mb-3">
               <Row className="p-3">
                 <Col>
                   <img height={64} src={player.avatar} alt="avatar" />
@@ -165,21 +190,39 @@ const RoomPage: React.FC = () => {
         <Col sm={9}>
           <Row>
             <Col xs={12} className="mt-3 mb-3">
-              <h3>Música</h3>
-              <p className="chat-box p-3">
-                Gênero: {room.genre.name}
-                <br />
-                {room.music ? 'Tocando...' : 'Aguardando...'}
-                <br />
-                Quantidade de letras no nome da música:{' '}
-                {room?.music?.name?.length || '...'}
-                <br />
-                Quantidade de letras no nome do autor:{' '}
-                {room?.music?.author?.length || '...'}
-              </p>
+              <h3 className="font-weight-bold">Música</h3>
+              <div className="d-flex chat-box p-3">
+                <Col className="d-flex flex-wrap justify-content-around">
+                  <Figure>
+                    <Figure.Image
+                      alt="play/pause button"
+                      src={room.music ? play : pause}
+                      height={100}
+                      width={100}
+                    />
+                  </Figure>
+                  <p className="d-flex text-center justify-content-center pt-4">
+                    {room.music ? 'Tocando...' : 'Aguardando...'}
+                  </p>
+                </Col>
+                <Col>
+                  <p className="d-inline font-weight-bold">Gênero:</p>{' '}
+                  {room.genre.name}
+                  <br />
+                  <p className="d-inline font-weight-bold">
+                    Quantidade de letras no nome da música:{' '}
+                  </p>
+                  {room?.music?.name?.length || '...'}
+                  <br />
+                  <p className="d-inline font-weight-bold">
+                    Quantidade de letras no nome do autor:{' '}
+                  </p>
+                  {room?.music?.author?.length || '...'}
+                </Col>
+              </div>
             </Col>
             <Col sm={6} className="mb-3">
-              <h3>Repostas</h3>
+              <h3 className="font-weight-bold">Repostas</h3>
               <Form onSubmit={sendAnswer} className="chat-box p-3">
                 <Textarea value={plays}></Textarea>
                 <InputGroup className="chat-input">
@@ -194,7 +237,7 @@ const RoomPage: React.FC = () => {
               </Form>
             </Col>
             <Col sm={6} className="mb-3">
-              <h3>Bate-papo</h3>
+              <h3 className="font-weight-bold">Bate-papo</h3>
               <Form onSubmit={sendMessage} className="chat-box p-3">
                 <Textarea value={messages}></Textarea>
                 <InputGroup className="chat-input">

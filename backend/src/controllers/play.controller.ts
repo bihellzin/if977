@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { getRepository, getManager, LessThan } from 'typeorm';
+import { getRepository, getManager, LessThan, Between } from 'typeorm';
 import levenshtein from 'js-levenshtein';
 import { asyncHandler } from '../middlewares/errorHandler';
 import { JwtAuth } from '../middlewares/passport';
@@ -9,6 +9,7 @@ import { Music } from './../models/music.model';
 import { Podium } from './../models/podium.model';
 import { User } from '../models/user.model';
 import { Socket } from 'socket.io';
+import HttpException from './../middlewares/errorHandler';
 
 export class PlayController {
   public router = Router();
@@ -66,21 +67,48 @@ export class PlayController {
 
     // Verifica se acertou
     if (play.accuracy === 100.0) {
+      const timestamp = new Date();
+      const currentUTC = new Date(
+        timestamp.getUTCFullYear(),
+        timestamp.getUTCMonth(),
+        timestamp.getUTCDate(),
+        timestamp.getUTCHours(),
+        timestamp.getUTCMinutes(),
+        timestamp.getUTCSeconds(),
+        timestamp.getUTCMilliseconds(),
+      );
+      const flood = await playRepository.findOne({
+        where: {
+          room: { id: play.room.id },
+          music: { id: play.music.id },
+          user: { id: play.user.id },
+          accuracy: play.accuracy,
+          createdAt: Between(
+            new Date(currentUTC.getTime() - 30 * 1000),
+            currentUTC,
+          ),
+        },
+      });
+      if (flood) throw new HttpException(500, 'Flood answer');
       console.log(`User ${user.id} hit music on Room ${roomId}`);
-      const [{ maxPodium }] = await manager.query(
-        'SELECT MAX(R.id) AS maxPodium FROM podium R',
-      );
-      const [{ currentPodium }] = await manager.query(
-        `
-          SELECT COALESCE(MAX(P.podiumId), 0) + 1 AS currentPodium
-          FROM play P
-              JOIN room R ON R.id = P.roomId
-          WHERE P.musicId = $1
-              AND P.roomId = $2
-              AND P.createdAt > R.startedAt
-          `,
-        [play.music.id, play.room.id],
-      );
+      const { maxPodium } = await manager
+        .createQueryBuilder()
+        .select('MAX(podium.id)', 'maxPodium')
+        .from(Podium, 'podium')
+        .getRawOne();
+      const { currentPodium } = await manager
+        .createQueryBuilder()
+        .select('COALESCE(MAX(play.podiumId), 0) + 1', 'currentPodium')
+        .from(Play, 'play')
+        .innerJoin(Podium, 'podium', 'podium.id = play.podiumId')
+        .innerJoin(
+          Room,
+          'room',
+          'room.id = play.roomId AND play.createdAt > room.startedAt',
+        )
+        .where('play.musicId = :musicId', { musicId: play.music.id })
+        .andWhere('play.roomId = :roomId', { roomId: play.room.id })
+        .getRawOne();
       play.podium = await manager.findOneOrFail(
         Podium,
         Math.min(maxPodium, currentPodium),
@@ -88,117 +116,50 @@ export class PlayController {
     }
     const data = await playRepository.save(play);
     // Reset podium
-    const [{ win }] = await manager.query(
-      `
-          SELECT COALESCE(SUM(R.score), 0) >= 120 AS win
-            FROM play P
-                JOIN podium R ON R.id = P.podiumId
-                JOIN room R1 ON R1.id = P.roomId AND R1.startedAt < P.createdAt
-            WHERE P.userId = $1 AND P.roomId = $2;
-    `,
-      [play.user.id, play.room.id],
-    );
-    if (win) {
-      await manager.query(
-        `
-          DELETE FROM play P
-          WHERE P.roomId = $1
-              AND P.userId != $2
-              AND P.podiumId IS NOT NULL
-              AND P.createdAt < $3;
-      `,
-        [play.room.id, play.user.id, play.room.startedAt],
-      );
-      await manager.query(`UPDATE room SET startedAt = $1 WHERE id = $2;`, [
-        play.createdAt,
-        play.room.id,
-      ]);
+    if (play.accuracy === 100) {
+      const { win } = await manager
+        .createQueryBuilder()
+        .select('COALESCE(SUM(podium.score), 0) >= 120', 'win')
+        .from(Play, 'play')
+        .innerJoin(Podium, 'podium', 'podium.id = play.podiumId')
+        .innerJoin(
+          Room,
+          'room',
+          'room.id = play.roomId AND room.startedAt < play.createdAt',
+        )
+        .where('play.userId = :userId', { userId: play.user.id })
+        .andWhere('play.roomId = :roomId', { roomId: play.room.id })
+        .getRawOne();
+      if (win) {
+        const resultDelete = await manager
+          .createQueryBuilder()
+          .delete()
+          .from(Play)
+          .where('roomId = :roomId', { roomId: play.room.id })
+          .andWhere('userId != :userId', { userId: play.user.id })
+          .andWhere('podiumId IS NOT NULL')
+          .andWhere('createdAt < :createdAt', {
+            createdAt: data.createdAt,
+          })
+          .execute();
+        console.log('Delete tasks' + resultDelete.affected);
+        const resultUpdate = await manager
+          .createQueryBuilder()
+          .update(Room)
+          .set({ startedAt: data.createdAt })
+          .where('id = :roomId', { roomId: play.room.id })
+          .execute();
+        console.log('Update room' + resultUpdate.affected);
+      }
     }
+
     const socket = req.app.get('socket') as Socket;
     if (socket) socket.to(`${play.room.id}`).emit('plays');
 
     return res.status(201).json({ data });
   }
 
-  async update(req: Request, res: Response) {
-    const { id } = req.params;
-    const { answer, roomId, musicId } = req.body;
-    const user = req.user as User;
-
-    const playRepository = getRepository(Play);
-    const roomRepository = getRepository(Room);
-    const musicRepository = getRepository(Music);
-    const manager = getManager();
-
-    const play = await playRepository.findOneOrFail(id);
-    play.user = user;
-    if (musicId) {
-      play.music = await musicRepository.findOneOrFail(musicId);
-    }
-    if (roomId) {
-      play.room = await roomRepository.findOneOrFail(roomId);
-    }
-    play.accuracy = calcAccuracy(answer, play.music.name);
-
-    // Verifica se acertou
-    if (play.accuracy === 100.0) {
-      const { maxPodium } = await manager.query(
-        'SELECT MAX(R.id) AS maxPodium FROM podium R',
-      );
-      const { currentPodium } = await manager.query(
-        `
-          SELECT COALESCE(MAX(P.podium_id), 0) + 1 AS currentPodium
-          FROM play P
-              JOIN room R ON R.id = P.roomId
-          WHERE P.musicId = $1
-              AND P.roomId = $2
-              AND P.createdAt > R.startedAt
-          `,
-        [play.music.id, play.room.id],
-      );
-      play.podium = await manager.findOneOrFail(
-        Podium,
-        Math.min(maxPodium, currentPodium),
-      );
-    }
-    const data = await playRepository.save(play);
-    // Reset podium
-    const { win } = await playRepository.query(
-      `
-          SELECT COALESCE(SUM(R.score), 0) >= 120 AS win
-            FROM play P
-                JOIN podium R ON R.id = P.podiumId
-                JOIN room R1 ON R1.id = P.roomId AND R1.startedAt < P.createdAt
-            WHERE P.userId = $1 AND P.roomId = $2;
-    `,
-      [play.user.id, play.room.id],
-    );
-    if (win) {
-      await playRepository.query(
-        `
-          DELETE FROM play P
-          WHERE P.roomId = $1
-              AND P.userId != $2
-              AND P.podiumId IS NOT NULL
-              AND P.createdAt < $4;
-      `,
-        [play.room.id, play.user.id, play.createdAt],
-      );
-      await playRepository.query(
-        `
-          UPDATE room
-          SET startedAt = $1
-          WHERE id = $2;
-      `,
-        [play.createdAt, play.room.id],
-      );
-    }
-
-    const socket = req.app.get('socket') as Socket;
-    if (socket) socket.to(`${data.room.id}`).emit('plays');
-
-    return res.status(200).json({ data });
-  }
+  async update(req: Request, res: Response) {}
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;
@@ -225,5 +186,5 @@ function calcAccuracy(a: string, b: string) {
     .replace(/[^a-z]/g, '');
   const maxlength = Math.max(unnacentA.length, unnacentB.length);
   const diff = levenshtein(unnacentA, unnacentB);
-  return ((maxlength - diff) / maxlength) * 100;
+  return Math.round(((maxlength - diff) / maxlength) * 100);
 }
