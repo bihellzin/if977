@@ -1,6 +1,6 @@
 {
-  "type": "sqlite",
-  "database": ":memory:",
+  "type": "postgres",
+  "url": "postgres://root:secret@localhost:5432/third_secongs",
   "synchronize": true,
   "logging": false,
   "dropSchema": true,

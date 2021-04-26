@@ -27,7 +27,7 @@ export class Play extends BaseEntity {
   @Column({ default: 0 })
   accuracy: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date;
 
   // Relations

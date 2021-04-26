@@ -24,7 +24,7 @@ export class Room extends BaseEntity {
   @PrimaryGeneratedColumn()
   readonly id: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   startedAt: Date;
 
   // Relations

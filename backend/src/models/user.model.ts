@@ -6,10 +6,7 @@ import {
   Column,
   Entity,
   getManager,
-  getRepository,
-  LessThanOrEqual,
   ManyToOne,
-  MoreThan,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -74,7 +71,6 @@ export class User extends BaseEntity {
         )
         .where('play.userId = :playerId', { playerId: this.id })
         .andWhere('play.roomId = :roomId', { roomId: this.room.id })
-        .andWhere('play.accuracy = 100')
         .getRawOne();
       const { score } = await manager
         .createQueryBuilder()
@@ -87,7 +83,6 @@ export class User extends BaseEntity {
         .andWhere('play.createdAt > :startedAt', {
           startedAt: this.room.startedAt,
         })
-        .andWhere('play.accuracy = 100')
         .getRawOne();
       this.score = score;
       this.wins = wins;
