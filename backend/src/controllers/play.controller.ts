@@ -67,16 +67,6 @@ export class PlayController {
 
     // Verifica se acertou
     if (play.accuracy === 100.0) {
-      const timestamp = new Date();
-      const currentUTC = new Date(
-        timestamp.getUTCFullYear(),
-        timestamp.getUTCMonth(),
-        timestamp.getUTCDate(),
-        timestamp.getUTCHours(),
-        timestamp.getUTCMinutes(),
-        timestamp.getUTCSeconds(),
-        timestamp.getUTCMilliseconds(),
-      );
       const flood = await playRepository.findOne({
         where: {
           room: { id: play.room.id },
@@ -84,8 +74,8 @@ export class PlayController {
           user: { id: play.user.id },
           accuracy: play.accuracy,
           createdAt: Between(
-            new Date(currentUTC.getTime() - 30 * 1000),
-            currentUTC,
+            new Date(new Date().getTime() - 30 * 1000),
+            new Date(),
           ),
         },
       });
@@ -138,11 +128,9 @@ export class PlayController {
           .where('roomId = :roomId', { roomId: play.room.id })
           .andWhere('userId != :userId', { userId: play.user.id })
           .andWhere('podiumId IS NOT NULL')
-          .andWhere('createdAt < :createdAt', {
-            createdAt: data.createdAt,
-          })
+          .andWhere('createdAt <= :createdAt', { createdAt: data.createdAt })
           .execute();
-        console.log('Delete tasks' + resultDelete.affected);
+        console.log('Delete play another players:' + resultDelete.affected);
         const resultUpdate = await manager
           .createQueryBuilder()
           .update(Room)

@@ -46,6 +46,7 @@ class App {
 
   private initializeSocket() {
     this.app.addListener('listen', (server: Express.Application) => {
+      console.log(process.env.NODE_ENV);
       if (process.env.NODE_ENV !== 'test') {
         const socket = createSocket(server, {
           cors: { origin: clientURL },
