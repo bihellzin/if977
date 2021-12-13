@@ -7,13 +7,14 @@ import { RoomController } from './room.controller';
 import { AuthController } from './auth.controller';
 import { GenreController } from './genre.controller';
 import { MusicController } from './music.controller';
+import { PlayController, calcAccuracy } from './play.controller';
 
 let connection: typeorm.Connection;
 let app: express.Application;
 let req: supertest.SuperTest<supertest.Test>;
 let token: string;
 
-describe('Room Suite', () => {
+describe('Play Suite', () => {
   beforeAll(async () => {
     connection = await Database.createConnection();
     app = new App([
@@ -21,6 +22,7 @@ describe('Room Suite', () => {
       new AuthController(),
       new GenreController(),
       new MusicController(),
+      new PlayController(),
     ]).app;
 
     req = supertest(app);
@@ -33,13 +35,13 @@ describe('Room Suite', () => {
     token = resultAuth.body.token;
   });
 
-  it('Create with music and genre', async () => {
-    const resAuth = await req
+  it('Create play', async () => {
+    const resGenre = await req
       .post('/genre')
       .send({ name: 'Rap' })
       .set('Authorization', `Bearer ${token}`);
-    expect(resAuth.status).toEqual(201);
-    expect(resAuth.body).toBeTruthy();
+    expect(resGenre.status).toEqual(201);
+    expect(resGenre.body).toBeTruthy();
 
     const resMusic = await req
       .post('/music')
@@ -47,20 +49,34 @@ describe('Room Suite', () => {
         name: 'Demorô',
         author: 'Criolo',
         url: 'criolo-demoro.mp3',
-        genreId: resAuth.body.data.id,
+        genreId: resGenre.body.data.id,
       })
       .set('Authorization', `Bearer ${token}`);
-
     expect(resMusic.status).toEqual(201);
     expect(resMusic.body).toBeTruthy();
 
     const resRoom = await req
       .post('/room')
-      .send({ genreId: resAuth.body.data.id, musicId: resMusic.body.data.id })
+      .send({ genreId: resGenre.body.data.id, musicId: resMusic.body.data.id })
       .set('Authorization', `Bearer ${token}`);
-
     expect(resRoom.status).toEqual(201);
     expect(resRoom.body).toBeTruthy();
+
+    const accuracy = calcAccuracy(
+      'Ximbalaie quando vejo o sol beijando o mar',
+      'Demorô',
+    );
+    //console.log(accuracy);
+    const resPlay = await req
+      .post('/play')
+      .send({
+        answer: 'Ximbalaie quando vejo o sol beijando o mar',
+        genreId: resGenre.body.data.id,
+        musicId: resMusic.body.data.id,
+      })
+      .set('Authorization', `Bearer ${token}`);
+    expect(resPlay.body).toBeTruthy();
+    expect(resPlay.status).toEqual(201);
   });
 
   it('Create with genre', async () => {
@@ -121,7 +137,6 @@ describe('Room Suite', () => {
       .post('/genre')
       .send({ name: 'Rosque' })
       .set('Authorization', `Bearer ${token}`);
-
     expect(resGenre.status).toEqual(201);
     expect(resGenre.body).toBeTruthy();
 

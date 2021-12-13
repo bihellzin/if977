@@ -27,9 +27,13 @@ export class UserController {
     const userRepository = getRepository(User);
     const [data, total] = await userRepository.findAndCount({
       where: {
-        room: {
-          id: roomId,
-        },
+        ...(req.query.roomId
+          ? {
+              room: {
+                id: roomId,
+              },
+            }
+          : {}),
       },
       skip: offset,
       take: limit,

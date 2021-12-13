@@ -1,4 +1,5 @@
 node_modules
+backend/reports
 **/yarn.lock
 package-lock.json
 .eslintcache

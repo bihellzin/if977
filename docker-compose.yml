@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  postgresdb:
+    image: postgres:latest
+    container_name: postgresdb
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=third_secongs
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret

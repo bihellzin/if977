@@ -1,4 +1,4 @@
-import { IsInt, IsNumber, Max, Min, validateOrReject } from 'class-validator';
+import { Max, Min, validateOrReject } from 'class-validator';
 import {
   BeforeInsert,
   BeforeUpdate,

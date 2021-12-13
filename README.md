@@ -16,13 +16,24 @@
 ## Sumário
 
 <!--ts-->
+
 - [Sumário](#sumário)
 - [Regras](#regras)
 - [Pontuação](#pontuação)
 - [Fim do jogo](#fim-do-jogo)
+- [Como instalar](#como-instalar)
+  - [Clonagem do repositório](#clonagem-do-repositório)
+  - [Instalação de dependências](#instalação-de-dependências)
+  - [Configuração do banco de dados](#configuração-do-banco-de-dados)
+    - [Execução em ambiente de produção](#execução-em-ambiente-de-produção)
+    - [Execução em ambiente de desenvolvimento](#execução-em-ambiente-de-desenvolvimento)
+  - [Execução dos testes](#execução-dos-testes)
+    - [Testes unitários](#testes-unitários)
+    - [Testes de mutação](#testes-de-mutação)
 - [Equipe](#equipe)
+- [Links Importantes](#links-importantes)
   <!--te-->
-  
+
 ---
 
 ## Regras
@@ -56,6 +67,63 @@ A rodada termina quando o jogador com maior pontuação atingir 120 pontos. Quan
 
 ---
 
+## Como instalar
+
+### Clonagem do repositório
+
+```
+git clone https://github.com/bihellzin/if977
+```
+
+### Instalação de dependências
+
+```
+cd backend
+yarn install
+```
+
+### Configuração do banco de dados
+
+```
+docker-compose up -d
+```
+
+```
+yarn orm schema:sync
+```
+
+```
+yarn orm migration:run
+```
+
+#### Execução em ambiente de produção
+
+```
+yarn build && yarn start
+```
+
+#### Execução em ambiente de desenvolvimento
+
+```
+yarn dev
+```
+
+### Execução dos testes
+
+#### Testes unitários
+
+```
+yarn test
+```
+
+#### Testes de mutação
+
+```
+yarn test:mutation
+```
+
+---
+
 ## Equipe
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
@@ -71,8 +139,8 @@ A rodada termina quando o jogador com maior pontuação atingir 120 pontos. Quan
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-
 ## Links Importantes
+
 - [Frontend](https://thirtysecongs.herokuapp.com/)
 - [Backend](https://thirtysecongs-api.herokuapp.com/)
 - [Documentação](https://github.com/bihellzin/if977/wiki)

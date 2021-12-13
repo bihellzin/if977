@@ -1,13 +1,11 @@
-import { IsNotEmpty, Length, validateOrReject } from 'class-validator';
+import { Length, validateOrReject } from 'class-validator';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Room } from './room.model';

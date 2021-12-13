@@ -163,7 +163,7 @@ export class PlayController {
   }
 }
 
-function calcAccuracy(a: string, b: string) {
+export function calcAccuracy(a: string, b: string) {
   const unnacentA = a
     .toLowerCase()
     .normalize('NFD')
